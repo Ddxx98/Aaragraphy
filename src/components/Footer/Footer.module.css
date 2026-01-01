@@ -1,0 +1,118 @@
+.footer {
+    background-color: var(--bg-cream);
+    padding: 60px 80px;
+    border-top: 1px solid rgba(56, 73, 54, 0.1);
+    font-family: var(--font-sans);
+}
+
+.container {
+    max-width: var(--container-max-width);
+}
+
+/* Top Row: Title/Socials (Left) + Camera (Right) */
+.topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 80px;
+    /* Spacing before copyright */
+}
+
+.leftCol {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.tagline {
+    font-family: var(--font-serif);
+    font-size: 40px;
+    color: var(--text-primary);
+    font-weight: 400;
+    margin: 0;
+}
+
+.socialLinks {
+    display: flex;
+    gap: 32px;
+}
+
+.socialLink {
+    font-size: 18px;
+    color: var(--text-primary);
+    /* Muted green */
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.socialLink:hover {
+    color: var(--text-accent);
+}
+
+/* Right Column: Camera */
+.rightCol {
+    display: flex;
+    align-items: flex-start;
+}
+
+.cameraIcon {
+    width: 120px;
+    /* Adjust size as needed */
+    height: auto;
+    opacity: 0.9;
+}
+
+/* Bottom Row: Copyright */
+.bottomRow {
+    margin-top: auto;
+}
+
+.copyright {
+    font-size: 16px;
+    color: var(--text-primary);
+    text-align: left;
+    /* Aligned left per image 1 */
+}
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+    .footer {
+        padding: 40px 24px;
+    }
+
+    .topRow {
+        flex-direction: column;
+        gap: 40px;
+        margin-bottom: 60px;
+    }
+
+    .tagline {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .socialLinks {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .socialLink {
+        font-size: 18px;
+        color: var(--text-primary);
+        /* Darker on mobile per image 2 */
+    }
+
+    /* Camera below socials on mobile */
+    .rightCol {
+        margin-top: 0;
+    }
+
+    .cameraIcon {
+        width: 100px;
+    }
+
+    .copyright {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+}

@@ -1,0 +1,161 @@
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  color: var(--white);
+  overflow: hidden;
+}
+
+/* 1. Circular Badge (Top Left) */
+.badge {
+  position: absolute;
+  top: 100px;
+  left: 32px;
+  width: 120px;
+  height: 120px;
+  z-index: 10;
+  animation: spin 20s linear infinite;
+}
+
+.badgeSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.badgeText {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  fill: var(--white);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 2. Top Right: Camera Settings */
+.topRight {
+  position: absolute;
+  top: 100px;
+  right: 32px;
+  text-align: right;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  z-index: 10;
+}
+
+/* 3. Bottom Left: Location Info */
+.bottomLeft {
+  position: absolute;
+  bottom: 180px;
+  left: 32px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  z-index: 10;
+}
+
+/* 4. Bottom Right: Curated Work */
+.bottomRight {
+  position: absolute;
+  bottom: 180px;
+  right: 32px;
+  text-align: right;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  z-index: 10;
+}
+
+/* 5. Marquee: Massive Text - Perfect Seamless Loop */
+.marqueeWrapper {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.marqueeInner {
+  display: flex;
+  width: fit-content;
+  animation: marquee 50s linear infinite;
+}
+
+.marqueeContent {
+  display: flex;
+  white-space: nowrap;
+}
+
+.marqueeContent span {
+  font-family: var(--font-serif);
+  font-size: 120px;
+  line-height: 1;
+  font-weight: 400;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hero {
+    height: 90vh;
+  }
+
+  .badge {
+    top: 100px;
+    left: 20px;
+    width: 90px;
+    height: 90px;
+  }
+
+  .badgeText {
+    font-size: 13px;
+  }
+
+  .topRight {
+    top: 100px;
+    right: 20px;
+    font-size: 12px;
+  }
+
+  .bottomLeft {
+    bottom: 120px;
+    left: 20px;
+    font-size: 12px;
+  }
+
+  .bottomRight {
+    bottom: 120px;
+    right: 20px;
+    font-size: 12px;
+    max-width: 150px;
+  }
+
+  .marqueeWrapper {
+    bottom: 10px;
+  }
+
+  .marqueeContent span {
+    font-size: 64px;
+  }
+}

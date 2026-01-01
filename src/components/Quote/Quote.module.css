@@ -1,0 +1,84 @@
+.section {
+    background-color: var(--bg-cream);
+    padding: var(--section-padding-desktop) var(--section-padding-inline);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Main Grid Layout */
+.mainLayout {
+    width: 100%;
+    margin-bottom: 60px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    /* Spacing between blocks */
+}
+
+.gridCell {
+    background-color: #DEDEBA;
+    /* Slightly darker cream/beige */
+    height: 120px;
+    /* Fixed height for cells */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 48px;
+    /* Large text */
+    color: #988C71;
+}
+
+/* Contact Cell (Center) */
+.contactCell {
+    background-color: var(--green-dropdown);
+    /* Dark Green */
+    color: #ffffff;
+    text-transform: lowercase;
+    /* "contact" is lowercase in image */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.contactCell:hover {
+    background-color: #2a482c;
+}
+
+/* Tags Section */
+.tagsBar {
+    width: 100%;
+    text-align: left;
+}
+
+.tagsTitle {
+    font-size: 24px;
+    font-weight: normal;
+    color: #9F9C95;
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--font-serif);
+}
+
+.tagsText {
+    font-size: 14px;
+    color: #9F9C95;
+    /* Lighter text for tags */
+    margin: 0;
+    font-family: var(--font-sans);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .grid {
+        gap: 8px;
+    }
+
+    .gridCell {
+        height: 80px;
+        font-size: 20px;
+    }
+}

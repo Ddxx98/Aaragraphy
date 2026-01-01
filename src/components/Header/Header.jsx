@@ -1,0 +1,112 @@
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import styles from "./Header.module.css";
+
+const Header = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleToggle = () => setIsOpen((prev) => !prev);
+
+  const getLinkClass = ({ isActive }) =>
+    isActive ? `${styles.link} ${styles.activeLink}` : styles.link;
+
+  const getMobileLinkClass = ({ isActive }) =>
+    isActive ? `${styles.linkMobile} ${styles.activeLinkMobile}` : styles.linkMobile;
+
+  return (
+    <header className={styles.header}>
+      <div className={styles.inner}>
+        <div className={styles.logo}>Aaragraphy</div>
+
+        {/* Desktop nav */}
+        <nav className={styles.navDesktop}>
+          <NavLink to="/" className={getLinkClass}>
+            Explore
+          </NavLink>
+          <NavLink to="/about" className={getLinkClass}>
+            About
+          </NavLink>
+          <NavLink to="/blog" className={getLinkClass}>
+            Work
+          </NavLink>
+          <NavLink to="/contact" className={getLinkClass}>
+            Contact
+          </NavLink>
+        </nav>
+
+        {/* Mobile hamburger */}
+        <button
+          className={`${styles.menuButton} ${isOpen ? styles.menuButtonOpen : ""}`}
+          onClick={handleToggle}
+          aria-label="Toggle navigation"
+        >
+          <span />
+          <span />
+        </button>
+      </div>
+
+      {/* Mobile full-screen menu */}
+      <div
+        className={`${styles.mobileOverlay} ${isOpen ? styles.mobileOverlayOpen : ""}`}
+      >
+        <div className={styles.overlayHeader}>
+          <div className={styles.logoOverlay}>Aarography</div>
+          <button
+            className={`${styles.menuButton} ${styles.menuButtonOverlay} ${isOpen ? styles.menuButtonOpen : ""}`}
+            onClick={handleToggle}
+            aria-label="Close navigation"
+          >
+            <span />
+            <span />
+          </button>
+        </div>
+
+        <nav className={styles.navMobile}>
+          <NavLink
+            to="/"
+            className={getMobileLinkClass}
+            onClick={handleToggle}
+          >
+            Explore
+          </NavLink>
+          <NavLink
+            to="/blog"
+            className={getMobileLinkClass}
+            onClick={handleToggle}
+          >
+            Work
+          </NavLink>
+          <NavLink
+            to="/about"
+            className={getMobileLinkClass}
+            onClick={handleToggle}
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/contact"
+            className={getMobileLinkClass}
+            onClick={handleToggle}
+          >
+            Contact
+          </NavLink>
+        </nav>
+
+        <div className={styles.socialsBlock}>
+          <div className={styles.socialsTitle}>Socials</div>
+          <a href="#" className={styles.socialLink}>
+            Instagram
+          </a>
+          <a href="#" className={styles.socialLink}>
+            X (Prev Twitter)
+          </a>
+          <a href="#" className={styles.socialLink}>
+            Youtube
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;

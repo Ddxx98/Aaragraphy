@@ -1,0 +1,168 @@
+/* base */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: var(--bg-cream);
+  /* light cream */
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+}
+
+/* logo */
+.logo,
+.logoOverlay {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  /* dark desaturated green */
+}
+
+/* desktop nav */
+.navDesktop {
+  margin-left: auto;
+  display: flex;
+  gap: 28px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+}
+
+.link {
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.activeLink {
+  color: #397249;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* hamburger button (mobile) */
+.menuButton {
+  margin-left: auto;
+  width: 22px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.menuButton span {
+  display: block;
+  height: 1px;
+  background-color: var(--text-primary);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* hamburger to X animation */
+.menuButtonOpen span:first-child {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menuButtonOpen span:last-child {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* overlay container */
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--green-dark);
+  /* green from design */
+  color: var(--bg-cream);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 24px 32px;
+}
+
+.mobileOverlayOpen {
+  transform: translateX(0);
+}
+
+/* top of overlay */
+.overlayHeader {
+  display: flex;
+  align-items: center;
+}
+
+.menuButtonOverlay span {
+  background-color: var(--bg-cream);
+}
+
+/* mobile nav links */
+.navMobile {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-size: 16px;
+}
+
+.linkMobile {
+  color: var(--bg-cream);
+  text-decoration: none;
+}
+
+.activeLinkMobile {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* socials section */
+.socialsBlock {
+  margin-top: auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-size: 13px;
+}
+
+.socialsTitle {
+  margin-bottom: 18px;
+  color: #e3dbcc;
+}
+
+.socialLink {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--bg-cream);
+  text-decoration: none;
+}
+
+/* responsiveness */
+@media (max-width: 768px) {
+  .navDesktop {
+    display: none;
+  }
+
+  .menuButton {
+    display: flex;
+  }
+
+  .inner {
+    padding-inline: 16px;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileOverlay {
+    display: none;
+  }
+}

@@ -1,0 +1,153 @@
+.section {
+    padding: var(--section-padding-desktop) var(--section-padding-inline);
+    background-color: var(--bg-cream);
+    text-align: center;
+}
+
+.subTitle {
+    font-family: var(--font-sans);
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.title {
+    font-family: var(--font-serif);
+    font-size: 80px;
+    font-weight: 400;
+    margin-bottom: 40px;
+    color: var(--text-primary);
+}
+
+/* cards grid */
+.grid {
+    max-width: var(--container-max-width);
+    margin: 0 auto 40px;
+    padding-inline: var(--section-padding-inline);
+    display: grid;
+    gap: 32px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* single card */
+.card {
+    background-color: #ffffff;
+    padding: 24px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover .cardTitle,
+.card:hover .names,
+.card:hover .dateRow {
+    color: var(--green-dropdown);
+}
+
+.card:hover .arrow {
+    color: var(--green-dropdown);
+}
+
+.imageWrapper {
+    background-color: #f6f6f6;
+    margin-bottom: 24px;
+}
+
+.image {
+    width: 100%;
+    display: block;
+}
+
+/* card text */
+.cardBody {
+    text-align: left;
+}
+
+.cardTitleRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.cardTitle {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.arrow {
+    color: var(--text-secondary);
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.names {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    transition: color 0.3s ease;
+}
+
+.dateRow {
+    font-size: 18px;
+    font-style: italic;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.dateLabel {
+    font-weight: 500;
+}
+
+.dateValue {
+    font-style: normal;
+}
+
+/* view all button */
+.viewAll {
+    margin-top: 8px;
+    padding: 12px 64px;
+    border-radius: 999px;
+    border: none;
+    font-family: var(--font-sans);
+    background-color: var(--text-accent);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+
+
+/* responsive: mobile stack cards 1 column */
+@media (max-width: 768px) {
+    .section {
+        padding: var(--section-padding-mobile) 16px;
+    }
+
+    .title {
+        font-size: 28px;
+        margin-bottom: 32px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .viewAll {
+        width: 220px;
+    }
+}

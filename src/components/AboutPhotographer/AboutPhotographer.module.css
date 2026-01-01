@@ -1,0 +1,88 @@
+.section {
+    min-height: 100vh;
+    display: flex;
+    background-color: var(--bg-green-unified);
+    overflow: hidden;
+    color: var(--bg-cream);
+    font-family: var(--font-serif);
+    padding: var(--section-padding-desktop) var(--section-padding-inline);
+}
+
+/* Desktop: side-by-side columns */
+.heroColumn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Center content */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    /* Subtle separator if needed, or remove */
+}
+
+.testimonialColumn {
+    flex: 1;
+    /* padding: 80px 64px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heroTitle {
+    font-size: clamp(48px, 6vw, 80px);
+    color: var(--text-white-soft);
+    font-weight: 400;
+    font-style: italic;
+    /* Italic per image */
+    text-align: center;
+    /* Centered per image */
+}
+
+.heroTitle span {
+    font-weight: 400;
+    /* Keep weight consistent or bold if desired */
+}
+
+/* Right side text */
+.testimonialWrapper {
+    max-width: 600px;
+}
+
+.testimonialText {
+    font-size: clamp(18px, 2vw, 32px);
+    color: var(--text-white-soft);
+    /* Slightly softer white */
+    font-style: italic;
+    /* Italic per image */
+    text-align: justify;
+    /* Justified per image look */
+    margin-bottom: 24px;
+}
+
+/* Mobile: stacked full-width */
+@media (max-width: 768px) {
+    .section {
+        flex-direction: column;
+        min-height: unset;
+        padding: var(--section-padding-mobile) 16px;
+    }
+
+    .heroColumn {
+        flex: none;
+        padding: 64px 24px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .heroTitle {
+        font-size: clamp(32px, 10vw, 56px);
+    }
+
+    .testimonialColumn {
+        flex: none;
+        padding: 64px 24px;
+    }
+
+    .testimonialText {
+        font-size: clamp(16px, 4vw, 20px);
+    }
+}

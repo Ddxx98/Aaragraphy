@@ -1,0 +1,64 @@
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* dark overlay for text readability */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* main title */
+.title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  text-align: center;
+  color: var(--white);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* "Captured" - larger top line */
+.titleLine1 {
+  display: block;
+  font-size: clamp(80px, 12vw, 120px);
+}
+
+
+/* mobile adjustments */
+@media (max-width: 768px) {
+  .hero {
+    height: 90vh;
+  }
+
+  .titleLine1 {
+    font-size: clamp(60px, 18vw, 100px);
+  }
+
+  .titleLine2 {
+    font-size: clamp(36px, 12vw, 64px);
+  }
+}
+
+/* larger screens */
+@media (min-width: 1200px) {
+  .titleLine1 {
+    font-size: 140px;
+  }
+
+  .titleLine2 {
+    font-size: 88px;
+  }
+}

@@ -1,0 +1,207 @@
+.section {
+    font-family: var(--font-serif);
+    padding: 120px var(--section-padding-inline) 96px;
+    background-color: var(--bg-cream);
+}
+
+.heading {
+    text-align: center;
+    font-size: 80px;
+    color: var(--text-primary);
+    margin-bottom: 40px;
+    font-weight: 400;
+}
+
+/* desktop layout: horizontal blocks */
+.blocksWrapper {
+    max-width: var(--container-max-width);
+    margin: 0 auto 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.block {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+    min-height: 260px;
+    color: var(--bg-cream);
+}
+
+.blockStory {
+    background-color: var(--green-dark);
+}
+
+.blockWhy {
+    background-color: #55594c;
+}
+
+.blockValues {
+    background-color: #7f965f;
+}
+
+.blockTitle {
+    font-family: "Instrument Serif";
+    font-size: 32px;
+    align-self: center;
+    justify-self: center;
+}
+
+.blockText {
+    font-family: "Instrument Serif";
+    padding: 40px 48px 40px 24px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* Me block */
+.meWrapper {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    background-color: #ffffff;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    padding: 48px 48px 56px;
+}
+
+.meText {
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 40px;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.meImageWrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.meImage {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Integrated CTA */
+.ctaWrapper {
+    margin-top: 80px;
+    padding: 48px 0;
+    text-align: center;
+    border-top: 1px solid rgba(56, 73, 54, 0.2);
+}
+
+.ctaTitle {
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: clamp(36px, 8vw, 64px);
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1.1;
+    margin-bottom: 40px;
+    letter-spacing: -0.01em;
+}
+
+.ctaTitle span {
+    font-weight: 400;
+}
+
+.ctaButton {
+    padding: 16px 48px;
+    background-color: var(--text-accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ctaButton:hover {
+    background-color: #1f5026;
+    transform: translateY(-2px);
+}
+
+/* mobile layout: stacked blocks */
+@media (max-width: 768px) {
+    .section {
+        padding: 120px 16px 80px;
+    }
+
+    .heading {
+        font-size: 28px;
+        margin-bottom: 32px;
+    }
+
+    .block {
+        grid-template-columns: 1fr;
+        padding: 24px 20px 28px;
+        min-height: unset;
+    }
+
+    .blockTitle {
+        margin-bottom: 16px;
+    }
+
+    .blockText {
+        padding: 0;
+        font-size: 14px;
+    }
+
+    .meWrapper {
+        grid-template-columns: 1fr;
+        padding: 32px 20px 40px;
+        row-gap: 24px;
+    }
+
+    .meText {
+        order: -1;
+        font-size: 32px;
+    }
+
+    .meImage {
+        max-width: 260px;
+    }
+
+    .ctaWrapper {
+        margin-top: 64px;
+        padding: 32px 16px;
+    }
+
+    .ctaTitle {
+        margin-bottom: 32px;
+    }
+
+    .ctaButton {
+        padding: 14px 40px;
+        width: 240px;
+    }
+}
+
+/* larger screens */
+@media (min-width: 1200px) {
+    .heading {
+        font-size: 36px;
+    }
+
+    .blockTitle {
+        font-size: 36px;
+    }
+
+    .meText {
+        font-size: 48px;
+    }
+
+    .ctaTitle {
+        font-size: 64px;
+        margin-bottom: 48px;
+    }
+
+    .ctaButton {
+        padding: 18px 56px;
+        font-size: 15px;
+    }
+}

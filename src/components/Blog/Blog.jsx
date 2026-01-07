@@ -145,10 +145,20 @@ const Blog = ({ posts = [] }) => {
               />
             </div>
 
-            <div className={styles.cardContent}>
-              <h3 className={styles.cardTitle}>{post.title} →</h3>
-              <p className={styles.cardAuthor}>{post.author}</p>
-              <p className={styles.cardDate}><span className={styles.cardDateText}>Date:</span>{post.date}</p>
+            <div className={styles.cardBody}>
+              <div className={styles.cardTitleRow}>
+                <h3 className={styles.cardTitle}>{post.title}</h3>
+                <span className={styles.arrow}>&rarr;</span>
+              </div>
+
+              <p className={styles.names}>
+                {post.groom} <span className={styles.weds}>&</span> {post.bride}
+              </p>
+
+              <p className={styles.dateRow}>
+                <span className={styles.dateLabel}>Date:</span>{" "}
+                <span className={styles.dateValue}>{post.date}</span>
+              </p>
             </div>
           </article>
         ))}

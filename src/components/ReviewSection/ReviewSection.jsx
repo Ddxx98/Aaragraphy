@@ -8,7 +8,8 @@ const reviews = [
     image: Couple, // you replace
     text: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn’t expect looks this great when we look back.",
     authorLine: "by Vicky Kaushal – Bride's Brother",
-    coupleLine: "Aniketh Russel Weds Arunima David",
+    groom: "Aniketh Russel",
+    bride: "Arunima David",
     date: "14-10-2025",
   },
   {
@@ -16,7 +17,8 @@ const reviews = [
     image: Couple,
     text: "They blended into the crowd and still managed to frame every precious second of the day. Looking at the photos feels like reliving the wedding all over again.",
     authorLine: "by Rahul Menon – Best Man",
-    coupleLine: "Aarav Nair Weds Diya Sharma",
+    groom: "Aarav Nair",
+    bride: "Diya Sharma",
     date: "02-02-2026",
   },
   {
@@ -24,7 +26,8 @@ const reviews = [
     image: Couple,
     text: "Every frame feels cinematic yet honest. Our families still keep talking about how beautifully the emotions were captured.",
     authorLine: "by Sneha Rao – Bride",
-    coupleLine: "Rohit Rao Weds Sneha Kulkarni",
+    groom: "Rohit Rao",
+    bride: "Sneha Kulkarni",
     date: "24-08-2025",
   },
 ];
@@ -76,7 +79,7 @@ const ReviewSection = () => {
             <div className={styles.body}>
               <p className={styles.text}>{item.text}</p>
               <p className={styles.authorLine}>{item.authorLine}</p>
-              <p className={styles.coupleLine}>{item.coupleLine}</p>
+              <p className={styles.coupleLine}>{item.groom} <span className={styles.weds}>Weds</span> {item.bride}</p>
               <p className={styles.dateLine}>
                 <span className={styles.dateLabel}>Date:</span> {item.date}
               </p>

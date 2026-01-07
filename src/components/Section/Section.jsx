@@ -7,7 +7,7 @@ import Quote from "../Quote/Quote";
 
 const Section = () => {
     return (
-        <div>
+        <div className={styles.section}>
             <AboutPhotographer />
             <div className={styles.container}>
                 <CapturedHero />

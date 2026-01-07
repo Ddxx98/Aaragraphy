@@ -23,7 +23,7 @@ const Home = () => {
                 <ReviewSection />
             </div>
             <div id="gallery">
-                <Gallery />
+                <Gallery viewAll={true} />
             </div>
             <div id="about">
                 <Section />

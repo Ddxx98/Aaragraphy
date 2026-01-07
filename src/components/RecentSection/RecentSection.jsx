@@ -4,23 +4,36 @@ import styles from "./RecentSection.module.css";
 import Couple from "../../assets/couple.jpg";
 
 const RecentSection = () => {
-    const navigate = useNavigate();
-    const items = [
-        {
-            id: "engagement",
-            title: "Engagement Shoots",
-            coupleNames: "John and Jane",
-            date: "2023-06-15",
-            image: Couple,
-        },
-        {
-            id: "wedding",
-            title: "Wedding Shoots",
-            coupleNames: "John and Jane",
-            date: "2023-06-15",
-            image: Couple,
-        },
-    ];
+  const navigate = useNavigate();
+  const items = [
+    {
+      id: 1,
+      title: "Engagement Shoots",
+      groom: "John",
+      bride: "Jane",
+      date: "2023-06-15",
+      image: Couple,
+    },
+    {
+      id: 2,
+      title: "Wedding Shoots",
+      groom: "John",
+      bride: "Jane",
+      date: "2023-06-15",
+      image: Couple,
+    },
+  ];
+
+  const handleBlogClick = (postId) => {
+    navigate(`/blog/${postId}`);
+  };
+
+  const handleKeyDown = (e, postId) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleBlogClick(postId);
+    }
+  };
 
   return (
     <section className={styles.section}>
@@ -29,7 +42,15 @@ const RecentSection = () => {
 
       <div className={styles.grid}>
         {items.map((item) => (
-          <article key={item.id} className={styles.card}>
+          <article
+            key={item.id}
+            className={styles.card}
+            onClick={() => handleBlogClick(item.id)}
+            onKeyDown={(e) => handleKeyDown(e, item.id)}
+            role="button"
+            tabIndex={0}
+            aria-label={`Read ${item.title}`}
+          >
             <div className={styles.imageWrapper}>
               <img
                 src={item.image}
@@ -45,7 +66,7 @@ const RecentSection = () => {
               </div>
 
               <p className={styles.names}>
-                {item.coupleNames}
+                {item.groom} <span className={styles.weds}>&</span> {item.bride}
               </p>
 
               <p className={styles.dateRow}>

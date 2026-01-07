@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
+import menu from "../../assets/menu.svg";
+import close from "../../assets/close.svg";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,8 +42,7 @@ const Header = () => {
           onClick={handleToggle}
           aria-label="Toggle navigation"
         >
-          <span />
-          <span />
+          <img src={menu} className={styles.menuIcon} alt="Menu" />
         </button>
       </div>
 
@@ -56,8 +57,7 @@ const Header = () => {
             onClick={handleToggle}
             aria-label="Close navigation"
           >
-            <span />
-            <span />
+            <img src={close} className={styles.menuIcon} alt="Close" />
           </button>
         </div>
 

@@ -1,5 +1,5 @@
 .section {
-  padding: 120px 16px 96px;
+  padding: var(--section-padding-desktop) var(--section-padding-inline);
   background-color: var(--bg-cream);
   font-family: var(--font-serif);
 }
@@ -47,13 +47,12 @@
 .activeFilter {
   color: var(--text-primary);
   text-decoration: underline;
-  text-underline-offset: 4px;
+  text-underline-offset: 10px;
 }
 
 /* Mobile Dropdowns */
 .mobileDropdownWrapper {
   display: none;
-  /* Hidden on desktop */
   position: relative;
 }
 
@@ -91,7 +90,6 @@
 
 .dropdownHeader {
   background-color: var(--green-dark);
-  /* Dark Green */
   color: #ffffff;
   padding: 12px 16px;
   font-size: 18px;
@@ -122,97 +120,118 @@
 
 /* Grid */
 .grid {
-  max-width: 1100px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-
-  gap: 24px;
+  gap: 32px;
 }
 
 /* Card */
 .card {
   background-color: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .card:hover,
 .card:focus {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   outline: none;
 }
 
+.card:hover .cardTitle,
+.card:hover .names,
+.card:hover .dateRow,
+.card:hover .arrow {
+  color: var(--green-dropdown);
+}
+
 .imageWrapper {
-  height: 220px;
-  overflow: hidden;
+  background-color: #f6f6f6;
+  margin-bottom: 24px;
 }
 
 .image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: block;
   transition: transform 0.4s ease;
 }
 
-.card:hover .image {
-  transform: scale(1.08);
+/* card text */
+.cardBody {
+  text-align: left;
 }
 
-.cardContent {
-  padding: 24px;
+.cardTitleRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
 }
 
 .cardTitle {
   font-family: var(--font-serif);
-  font-size: 18px;
+  font-size: 24px;
+  color: var(--text-secondary);
   font-weight: 400;
-  color: var(--text-primary);
-  margin-bottom: 12px;
+  transition: color 0.3s ease;
 }
 
-.cardAuthor {
+.arrow {
+  color: var(--text-secondary);
   font-size: 18px;
-  color: var(--text-primary);
-  margin-bottom: 6px;
+  transition: color 0.3s ease;
+}
+
+.names {
+  font-size: 18px;
   font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  transition: color 0.3s ease;
   font-family: var(--font-sans);
 }
 
-.cardDate {
+.weds {
+    font-weight: 400;
+}
+
+.dateRow {
   font-size: 18px;
-  color: var(--text-primary);
-  margin: 0;
   font-style: italic;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
   font-family: var(--font-sans);
 }
 
-.cardDateText {
-  font-style: italic;
+.dateLabel {
+  font-weight: 500;
+}
+
+.dateValue {
+  font-style: normal;
 }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .section {
-    padding: 120px 16px 80px;
+    padding: var(--section-padding-mobile) 16px;
   }
 
   .filterBar {
-    font-size: 20px;
+    font-size: 14px;
     gap: 6px;
+    justify-content: flex-start;
   }
 
-  /* Hide desktop lists */
   .desktopCategories,
   .desktopViews {
     display: none;
   }
 
-  /* Show mobile dropdowns */
   .mobileDropdownWrapper {
     display: block;
   }
@@ -220,19 +239,27 @@
   .grid {
     grid-template-columns: 1fr;
     gap: 20px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .filterBar {
-    font-size: 28px;
+    padding-inline: 0;
   }
 
-  .imageWrapper {
-    height: 240px;
+  .card {
+    padding: 20px;
+  }
+
+  .image {
+    height: 50vh;
+    object-fit: cover;
   }
 
   .cardTitle {
-    font-size: 22px;
+    font-size: 24px;
+  }
+
+  .names {
+    font-size: 14px;
+  }
+
+  .dateRow {
+    font-size: 14px;
   }
 }

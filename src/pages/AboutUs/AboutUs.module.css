@@ -1,6 +1,6 @@
 .section {
     font-family: var(--font-serif);
-    padding: 120px var(--section-padding-inline) 96px;
+    padding: var(--section-padding-desktop) 40px;
     background-color: var(--bg-cream);
 }
 
@@ -14,7 +14,6 @@
 
 /* desktop layout: horizontal blocks */
 .blocksWrapper {
-    max-width: var(--container-max-width);
     margin: 0 auto 56px;
     display: flex;
     flex-direction: column;
@@ -23,53 +22,59 @@
 
 .block {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
-    min-height: 260px;
-    color: var(--bg-cream);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 90vh;
+    color: var(--text-white-soft);
+    align-items: center;
 }
 
 .blockStory {
-    background-color: var(--green-dark);
+    background-color: var(--green-dropdown);
 }
 
 .blockWhy {
-    background-color: #55594c;
+    background-color: var(--text-primary);
 }
 
 .blockValues {
-    background-color: #7f965f;
+    background-color: #86976D;
 }
 
 .blockTitle {
-    font-family: "Instrument Serif";
-    font-size: 32px;
+    font-family: var(--font-serif);
+    font-size: 80px;
+    padding: 60px;
     align-self: center;
     justify-self: center;
+    font-weight: 400;
+    font-style: italic;
+    text-align: center;
 }
 
 .blockText {
-    font-family: "Instrument Serif";
-    padding: 40px 48px 40px 24px;
-    font-size: 15px;
-    line-height: 1.6;
+    font-family: var(--font-serif);
+    padding: 60px;
+    font-size: 24px;
+    font-weight: 400;
 }
 
 /* Me block */
 .meWrapper {
-    max-width: var(--container-max-width);
     margin: 0 auto;
     background-color: #ffffff;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
-    padding: 48px 48px 56px;
+    padding: 64px;
+    gap: 48px;
 }
 
 .meText {
-    font-family: "Georgia", "Times New Roman", serif;
-    font-size: 40px;
+    font-family: var(--font-serif);
+    font-size: 80px;
     color: var(--text-primary);
     text-align: center;
+    font-weight: 400;
 }
 
 .meImageWrapper {
@@ -78,7 +83,7 @@
 }
 
 .meImage {
-    max-width: 320px;
+    max-width: 400px;
     width: 100%;
     height: auto;
     object-fit: cover;
@@ -89,17 +94,16 @@
     margin-top: 80px;
     padding: 48px 0;
     text-align: center;
-    border-top: 1px solid rgba(56, 73, 54, 0.2);
 }
 
 .ctaTitle {
-    font-family: "Georgia", "Times New Roman", serif;
-    font-size: clamp(36px, 8vw, 64px);
-    font-weight: 300;
+    font-family: var(--font-serif);
+    font-size: clamp(40px, 8vw, 64px);
+    font-weight: 400;
     color: var(--text-primary);
-    line-height: 1.1;
+    line-height: 1.2;
     margin-bottom: 40px;
-    letter-spacing: -0.01em;
+    font-style: italic;
 }
 
 .ctaTitle span {
@@ -108,21 +112,24 @@
 
 .ctaButton {
     padding: 16px 48px;
-    background-color: var(--text-accent);
+    background-color: var(--green-dropdown);
     color: #ffffff;
     border: none;
     border-radius: 999px;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: var(--font-sans);
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .ctaButton:hover {
-    background-color: #1f5026;
+    background-color: var(--green-hover);
     transform: translateY(-2px);
+}
+
+.ctaButton:active {
+    background-color: var(--green-active);
 }
 
 /* mobile layout: stacked blocks */
@@ -132,34 +139,37 @@
     }
 
     .heading {
-        font-size: 28px;
+        font-size: 48px;
         margin-bottom: 32px;
     }
 
     .block {
         grid-template-columns: 1fr;
-        padding: 24px 20px 28px;
+        padding: 32px 24px;
         min-height: unset;
     }
 
     .blockTitle {
         margin-bottom: 16px;
+        font-size: 40px;
+        padding: 0;
     }
 
     .blockText {
         padding: 0;
         font-size: 14px;
+        padding: 0;
     }
 
     .meWrapper {
         grid-template-columns: 1fr;
-        padding: 32px 20px 40px;
-        row-gap: 24px;
+        padding: 40px 24px;
+        row-gap: 32px;
     }
 
     .meText {
         order: -1;
-        font-size: 32px;
+        font-size: 48px;
     }
 
     .meImage {
@@ -178,30 +188,5 @@
     .ctaButton {
         padding: 14px 40px;
         width: 240px;
-    }
-}
-
-/* larger screens */
-@media (min-width: 1200px) {
-    .heading {
-        font-size: 36px;
-    }
-
-    .blockTitle {
-        font-size: 36px;
-    }
-
-    .meText {
-        font-size: 48px;
-    }
-
-    .ctaTitle {
-        font-size: 64px;
-        margin-bottom: 48px;
-    }
-
-    .ctaButton {
-        padding: 18px 56px;
-        font-size: 15px;
     }
 }

@@ -91,30 +91,56 @@ const BlogDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // Get data for the specific ID, or fallback to the first one (or show not found)
+    // Get data for the specific ID, or fallback to the first one
     const blogData = blogPosts[id] || blogPosts[1];
+
+    // Navigation logic
+    const postIds = Object.keys(blogPosts).map(Number);
+    const currentIndex = postIds.indexOf(Number(id));
+
+    const prevId = currentIndex > 0 ? postIds[currentIndex - 1] : null;
+    const nextId = currentIndex < postIds.length - 1 ? postIds[currentIndex + 1] : null;
 
     // Scroll to top on mount
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, []);
+    }, [id]); // Re-scroll when ID changes
 
     return (
         <div className={styles.container}>
             <div className={styles.inner}>
-                {/* Back Link */}
-                <a onClick={() => navigate(-1)} className={styles.backLink}>
-                    ← Back
-                </a>
+                {/* Navigation Bar */}
+                <nav className={styles.navigation}>
+                    <button onClick={() => navigate(-1)} className={styles.backButton}>
+                        <span className={styles.arrowLeft}>←</span>
+                    </button>
+
+                    <div className={styles.navRight}>
+                        <button
+                            onClick={() => prevId && navigate(`/blog/${prevId}`)}
+                            className={`${styles.navCircle} ${!prevId ? styles.disabled : ''}`}
+                            disabled={!prevId}
+                        >
+                            <span className={styles.arrowLeft}>←</span>
+                        </button>
+                        <button
+                            onClick={() => nextId && navigate(`/blog/${nextId}`)}
+                            className={`${styles.navCircle} ${!nextId ? styles.disabled : ''}`}
+                            disabled={!nextId}
+                        >
+                            <span className={styles.arrowRight}>→</span>
+                        </button>
+                    </div>
+                </nav>
 
                 {/* Header */}
                 <header className={styles.header}>
                     <h1 className={styles.title}>{blogData.title}</h1>
                     <div className={styles.meta}>
                         <span className={styles.author}>{blogData.author}</span>
-                        <span>{blogData.category}</span>
-                        <span>{blogData.date}</span>
-                        <span>{blogData.location}</span>
+                        <span className={styles.category}>{blogData.category}</span>
+                        <p className={styles.date}>Date: <span>{blogData.date}</span></p>
+                        <p className={styles.location}>Location: <span>{blogData.location}</span></p>
                     </div>
                 </header>
 
@@ -159,6 +185,27 @@ const BlogDetails = () => {
                             <img src={item.src} alt={`Gallery ${index}`} className={styles.gridImage} />
                         </div>
                     ))}
+                </div>
+
+                {/* Bottom Navigation */}
+                <div className={styles.bottomNav}>
+                    <span className={styles.bottomNavText}>Other Stories</span>
+                    <div className={styles.navRight}>
+                        <button
+                            onClick={() => prevId && navigate(`/blog/${prevId}`)}
+                            className={`${styles.navCircle} ${!prevId ? styles.disabled : ''}`}
+                            disabled={!prevId}
+                        >
+                            <span className={styles.arrowLeft}>←</span>
+                        </button>
+                        <button
+                            onClick={() => nextId && navigate(`/blog/${nextId}`)}
+                            className={`${styles.navCircle} ${!nextId ? styles.disabled : ''}`}
+                            disabled={!nextId}
+                        >
+                            <span className={styles.arrowRight}>→</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

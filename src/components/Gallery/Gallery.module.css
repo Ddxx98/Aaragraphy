@@ -1,5 +1,5 @@
 .section {
-    padding: var(--section-padding-desktop) var(--section-padding-inline) var(--section-padding-desktop);
+    padding: var(--section-padding-desktop) var(--section-padding-inline);
     background-color: var(--bg-cream);
     text-align: center;
 }
@@ -20,9 +20,7 @@
 
 /* 3x3 grid on desktop */
 .grid {
-    max-width: var(--container-max-width);
     margin: 0 auto 40px;
-    padding-inline: var(--section-padding-inline);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
@@ -34,7 +32,6 @@
     aspect-ratio: 1;
     overflow: hidden;
     background-color: #ffffff;
-    border-radius: 4px;
 }
 
 .image {
@@ -55,21 +52,33 @@
     border-radius: 999px;
     border: none;
     font-family: var(--font-sans);
-    background-color: var(--text-accent);
+    background-color: var(--green-dropdown);
     color: #ffffff;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
 }
 
+.viewAll:hover {
+    background-color: var(--green-hover);
+}
+
+.viewAll:active {
+    background-color: var(--green-active);
+}
+
 /* mobile: single column */
 @media (max-width: 768px) {
     .section {
-        padding: var(--section-padding-mobile) 16px;
+        padding: 40px 16px;
+    }
+
+    .subTitle {
+        font-size: 14px;
     }
 
     .title {
-        font-size: 28px;
+        font-size: 52px;
         margin-bottom: 32px;
     }
 
@@ -78,10 +87,13 @@
         grid-template-rows: repeat(9, 1fr);
         max-width: 400px;
         gap: 12px;
+        padding: 0;
     }
 
     .imageWrapper {
         aspect-ratio: 16/20;
+        padding: 0;
+        margin: 0;
         /* portrait for mobile */
     }
 

@@ -21,9 +21,7 @@
 
 /* cards grid */
 .grid {
-    max-width: var(--container-max-width);
     margin: 0 auto 40px;
-    padding-inline: var(--section-padding-inline);
     display: grid;
     gap: 32px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -97,6 +95,10 @@
     transition: color 0.3s ease;
 }
 
+.weds {
+    font-weight: 400;
+}
+
 .dateRow {
     font-size: 18px;
     font-style: italic;
@@ -119,35 +121,64 @@
     border-radius: 999px;
     border: none;
     font-family: var(--font-sans);
-    background-color: var(--text-accent);
+    background-color: var(--green-dropdown);
     color: #ffffff;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
 }
 
+.viewAll:hover {
+    background-color: var(--green-hover);
+}
 
+.viewAll:active {
+    background-color: var(--green-active);
+}
 
 /* responsive: mobile stack cards 1 column */
 @media (max-width: 768px) {
     .section {
-        padding: var(--section-padding-mobile) 16px;
+        padding: 40px 16px;
+    }
+
+    .subTitle {
+        font-size: 14px;
     }
 
     .title {
-        font-size: 28px;
+        font-size: 32px;
         margin-bottom: 32px;
     }
 
     .grid {
         grid-template-columns: 1fr;
+        padding: 0;
     }
 
     .card {
-        padding: 20px;
+        padding: 12px;
+    }
+
+    .image{
+        height: 50vh;
+        object-fit: cover;
+    }
+
+    .cardTitle {
+        font-size: 24px;
+    }
+
+    .names {
+        font-size: 14px;
+    }
+
+    .dateRow {
+        font-size: 14px;
     }
 
     .viewAll {
         width: 220px;
+        font-size: 14px;
     }
 }

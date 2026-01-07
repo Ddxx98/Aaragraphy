@@ -7,7 +7,7 @@ import CoupleImage from "../../assets/couple.jpg";
 import Couple2Image from "../../assets/couple 2.jpg";
 import CaptureImage from "../../assets/capture.jpg";
 
-const Gallery = () => {
+const Gallery = ({viewAll}) => {
     const navigate = useNavigate();
     const galleryImages = [
         { id: 1, src: HeroImage, alt: "Wedding moment 1" },
@@ -38,13 +38,15 @@ const Gallery = () => {
                 ))}
             </div>
 
-            <button
-                className={styles.viewAll}
-                type="button"
-                onClick={() => navigate('/blog')}
-            >
-                VIEW ALL
-            </button>
+            {viewAll && (
+                <button
+                    className={styles.viewAll}
+                    type="button"
+                    onClick={() => navigate('/blog')}
+                >
+                    VIEW ALL
+                </button>
+            )}
         </section>
     );
 };

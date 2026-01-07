@@ -8,6 +8,7 @@ const CapturedHero = () => {
       className={styles.hero}
       style={{
         backgroundImage: `url(${CaptureHero})`,
+        filter: "grayscale(100%)",
       }}
     >
       <div className={styles.overlay}>

@@ -1,12 +1,13 @@
+
 .container {
     margin: 0 auto;
     background-color: var(--bg-cream);
-    padding: var(--section-padding-desktop) var(--section-padding-inline);
+    padding: var(--section-padding-desktop) 40px;
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .container {
-        padding: var(--section-padding-mobile) 16px;
+        padding: 40px 16px;
     }
 }

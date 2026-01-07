@@ -1,42 +1,66 @@
 .section {
-    padding: 120px var(--section-padding-inline);
+    padding: 100px 0 100px;
     background-color: var(--bg-cream);
     font-family: var(--font-sans);
 }
 
-.container {
-    max-width: 500px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
 .title {
     font-family: var(--font-serif);
-    font-size: 48px;
+    font-size: 80px;
     color: #556b53;
-    margin-bottom: 40px;
+    margin-bottom: 120px;
     text-align: center;
     font-weight: 400;
 }
 
-/* Card Wrapper - combines form and email info */
-.card {
-    background-color: #f8f8f8;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+.container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.OverlayCard {
+    background-color: white;
+    width: 90%;
+    margin: 0 auto;
+    min-height: 1100px;
+    position: relative;
+}
+
+/* Form Card Specific Styles */
+.Formcard {
+    position: absolute;
+    top: -80px;
+    /* Overlap the cream background */
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    background-color: #FCFBF8;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0px 0px 8px 1px #00000014;
     overflow: hidden;
+    z-index: 10;
+}
+
+/* Email Card Specific Styles - Separate Section */
+.Emailcard {
+    width: 90%;
+    margin: 10px auto 0;
+    background-color: white;
+    padding: 60px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 0 16px 16px;
 }
 
 /* Form inside Card */
 .form {
     background-color: transparent;
     padding: 40px;
-}
-
-.form .title {
-    display: none;
 }
 
 /* Field Groups */
@@ -47,9 +71,10 @@
 .label {
     display: block;
     font-size: 14px;
-    color: var(--text-secondary);
+    color: #666;
     margin-bottom: 8px;
     font-weight: 400;
+    font-family: var(--font-sans);
 }
 
 .input,
@@ -57,8 +82,8 @@
 .textarea {
     width: 100%;
     padding: 12px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
+    border: 1px solid #E4E8D9;
+    border-radius: 4px;
     font-size: 14px;
     color: #333;
     background-color: #ffffff;
@@ -68,26 +93,29 @@
 
 .input::placeholder,
 .textarea::placeholder {
-    color: #a0a0a0;
+    color: #9F9C95;
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+    border-color: #86976D;
 }
 
 .input:focus,
 .select:focus,
 .textarea:focus {
     outline: none;
-    border-color: var(--text-primary);
+    border-color: var(--green-dropdown);
 }
 
 /* Dropdown Styling */
 .select {
     appearance: none;
-    background-color: var(--green-dropdown);
-    color: #ffffff;
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
     background-repeat: no-repeat;
     background-position: right 16px top 50%;
     background-size: 10px auto;
-    border: 1px solid var(--green-dropdown);
 }
 
 .select option {
@@ -97,7 +125,7 @@
 
 .textarea {
     resize: vertical;
-    min-height: 100px;
+    min-height: 120px;
 }
 
 /* Date Split Inputs */
@@ -108,96 +136,114 @@
 
 .dateSplitInput {
     width: 80px;
-    padding: 12px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
+    padding: 12px;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
     font-size: 14px;
     color: #333;
     background-color: #ffffff;
-    transition: border-color 0.2s;
-    font-family: var(--font-sans);
     text-align: center;
 }
 
 .dateSplitInputYear {
     width: 120px;
-    padding: 12px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
+    padding: 12px;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
     font-size: 14px;
     color: #333;
     background-color: #ffffff;
-    transition: border-color 0.2s;
-    font-family: var(--font-sans);
     text-align: center;
-}
-
-.dateSplitInput::placeholder,
-.dateSplitInputYear::placeholder {
-    color: #a0a0a0;
-}
-
-.dateSplitInput:focus,
-.dateSplitInputYear:focus {
-    outline: none;
-    border-color: var(--text-primary);
 }
 
 /* Submit Button */
 .submitButton {
     width: 100%;
     padding: 16px;
-    background-color: var(--text-primary);
+    background-color: var(--green-dropdown);
     color: #ffffff;
     border: none;
     border-radius: 30px;
     font-size: 14px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-family: var(--font-sans);
     cursor: pointer;
     transition: background-color 0.2s;
     margin-top: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .submitButton:hover {
-    background-color: #2a3829;
+    background-color: var(--green-hover);
 }
 
-/* Email Info - inside same card */
+.submitButton:active {
+    background-color: var(--green-active);
+}
+
+/* Email Info */
 .emailInfo {
-    background-color: transparent;
     text-align: center;
-    padding: 40px;
-    border-top: 1px solid #e8e8e8;
 }
 
 .emailInfo h3 {
-    font-family: var(--font-serif);
-    font-size: 32px;
-    color: var(--text-secondary);
+    font-size: 64px;
+    color: #86976D;
     font-style: italic;
     font-weight: 400;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .emailAddress {
     font-family: var(--font-serif);
-    font-size: 40px;
-    color: var(--text-primary);
+    font-size: 80px;
+    color: var(--green-dropdown);
     font-style: italic;
-    font-weight: 400;
-    word-break: break-all;
 }
 
 /* Mobile */
 @media (max-width: 768px) {
     .section {
-        padding: 120px 16px 40px;
+        padding: 60px 0 60px;
     }
 
     .title {
-        font-size: 36px;
+        font-size: 48px;
+        margin-bottom: 40px;
+        padding: 0 16px;
+    }
+
+    .OverlayCard {
+        width: 93%;
+        min-height: 50vh;
+        /* Remove fixed height */
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 40px;
+        
+    }
+
+    .Formcard {
+        position: relative;
+        /* Switch to relative for dynamic height */
+        top: -90px;
+        /* Negative top to overlap the cream background */
+        width: 90%;
+        max-width: 500px;
+        left: auto;
+        transform: none;
+        margin: 0 auto;
+        box-shadow: 0px 0px 8px 1px #00000014;
+        bottom: 0px;
+    }
+
+    .Emailcard {
+        width: 93%;
+        margin-top: 3px;
+        padding: 40px 20px;
     }
 
     .form {
@@ -206,20 +252,15 @@
 
     .dateSplitRow {
         gap: 8px;
+        justify-content: center;
     }
 
     .dateSplitInput {
         width: 60px;
-        padding: 10px;
     }
 
     .dateSplitInputYear {
         width: 90px;
-        padding: 10px;
-    }
-
-    .emailInfo {
-        padding: 24px;
     }
 
     .emailInfo h3 {

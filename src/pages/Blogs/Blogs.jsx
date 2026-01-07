@@ -7,49 +7,55 @@ const Blogs = () => {
     const blogPosts = [
         {
             id: 1,
-            image: "/images/blog-1.jpg",
+            image: "../src/assets/couple.jpg",
             title: "Memoir of Nature",
-            author: "Aniketh Russel & Arunima David",
+            groom: "Aniketh Russel",
+            bride: "Arunima David",
             date: "14-10-2025",
             category: "Wedding"
         },
         {
             id: 2,
-            image: "/images/blog-2.jpg",
+            image: "../src/assets/couple.jpg",
             title: "Memoir of Nature",
-            author: "Aniketh Russel & Arunima David",
+            groom: "Aniketh Russel",
+            bride: "Arunima David",
             date: "14-10-2025",
             category: "Corporate"
         },
         {
             id: 3,
-            image: "/images/blog-3.jpg",
+            image: "../src/assets/couple.jpg",
             title: "Memoir of Nature",
-            author: "Aniketh Russel & Arunima David",
+            groom: "Aniketh Russel",
+            bride: "Arunima David",
             date: "14-10-2025",
             category: "Travel"
         },
         {
             id: 4,
-            image: "/images/blog-4.jpg",
+            image: "../src/assets/couple.jpg",
             title: "Memoir of Nature",
-            author: "Aniketh Russel & Arunima David",
+            groom: "Aniketh Russel",
+            bride: "Arunima David",
             date: "14-10-2025",
             category: "Baby Shower"
         },
         {
             id: 5,
-            image: "/images/blog-5.jpg",
+            image: "../src/assets/couple.jpg",
             title: "Memoir of Nature",
-            author: "Aniketh Russel & Arunima David",
+            groom: "Aniketh Russel",
+            bride: "Arunima David",
             date: "14-10-2025",
             category: "Wedding"
         },
         {
             id: 6,
-            image: "/images/blog-6.jpg",
+            image: "../src/assets/couple.jpg",
             title: "Memoir of Nature",
-            author: "Aniketh Russel & Arunima David",
+            groom: "Aniketh Russel",
+            bride: "Arunima David",
             date: "14-10-2025",
             category: "Travel"
         }
@@ -57,7 +63,7 @@ const Blogs = () => {
     return (
         <div>
             <Blog posts={blogPosts} />
-            <Gallery />
+            <Gallery viewAll={false} />
             <ReviewSection />
         </div>
     );

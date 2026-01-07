@@ -119,7 +119,7 @@
     font-family: var(--font-sans);
     margin-top: 50px;
     padding: 15px 50px;
-    background-color: #2F7B3B;
+    background-color: var(--green-dropdown);
     color: white;
     border: none;
     border-radius: 30px;
@@ -131,7 +131,11 @@
 }
 
 .mainContactBtn:hover {
-    background-color: #4b7548;
+    background-color: var(--green-hover);
+}
+
+.mainContactBtn:active {
+    background-color: var(--green-active);
 }
 
 @keyframes fadeIn {
@@ -148,9 +152,16 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+    .subTitle {
+        font-size: 14px;
+    }
     .title {
         font-size: 32px;
         margin-bottom: 30px;
+    }
+
+    .serviceItem {
+        height: 60px;
     }
 
     .serviceLabel {
@@ -163,7 +174,7 @@
     }
 
     .active {
-        height: 280px;
+        height: 200px;
         /* Reduced mobile height from 400px */
         margin: 10px 0;
         border-radius: 0;
@@ -180,6 +191,7 @@
     }
 
     .contactBtn {
+        color: #2f2f2f;
         padding: 14px 40px;
         font-size: 14px;
     }

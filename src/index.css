@@ -12,13 +12,15 @@
   --white: #ffffff;
   --green-dark: #325735;
   --green-dropdown: #397249;
+  --green-hover: #4B9660;
+  --green-active: #295234;
   --bg-green-unified: #397249;
   --text-white-soft: #EAEAD4;
 
   /* Spacing System */
   --section-padding-desktop: 80px;
   --section-padding-mobile: 64px;
-  --section-padding-inline: 20px;
+  --section-padding-inline: 40px;
   --container-max-width: 1200px;
 }
 

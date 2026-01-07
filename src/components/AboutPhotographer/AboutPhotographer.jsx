@@ -21,6 +21,13 @@ const AboutPhotographer = () => {
                 </h1>
             </div>
 
+            <div className={styles.heroMobileColumn}>
+                <h1 className={styles.heroTitle}>
+                    WE DON'T JUST CAPTURE<br></br> MOMENTS, <br></br>
+                    WE LIVE THEM WITH YOU!
+                </h1>
+            </div>
+
             {/* Right: Scrolling testimonial */}
             <div className={styles.testimonialColumn}>
                 <div className={styles.testimonialWrapper}>

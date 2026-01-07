@@ -1,6 +1,6 @@
 .section {
+    padding: var(--section-padding-desktop) 40px;
     background-color: var(--bg-cream);
-    padding: var(--section-padding-desktop) var(--section-padding-inline);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,12 +73,23 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .section {
+        padding: 40px 16px;
+    }
     .grid {
         gap: 8px;
     }
 
     .gridCell {
         height: 80px;
-        font-size: 20px;
+        font-size: 16px;
+    }
+
+    .tagsTitle{
+        font-size: 16px;
+    }
+
+    .tagsText{
+        font-size: 12px;
     }
 }

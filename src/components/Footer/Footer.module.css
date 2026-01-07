@@ -1,7 +1,6 @@
 .footer {
     background-color: var(--bg-cream);
-    padding: 60px 80px;
-    border-top: 1px solid rgba(56, 73, 54, 0.1);
+    padding: var(--section-padding-desktop) var(--section-padding-inline);
     font-family: var(--font-sans);
 }
 
@@ -46,7 +45,11 @@
 }
 
 .socialLink:hover {
-    color: var(--text-accent);
+    color: var(--green-dropdown);
+}
+
+.socialLink:active {
+    color: var(--green-active);
 }
 
 /* Right Column: Camera */
@@ -87,7 +90,7 @@
     }
 
     .tagline {
-        font-size: 32px;
+        font-size: 24px;
         margin-bottom: 8px;
     }
 
@@ -97,8 +100,8 @@
     }
 
     .socialLink {
-        font-size: 18px;
-        color: var(--text-primary);
+        font-size: 14px;
+        color: var(--green-dropdown);
         /* Darker on mobile per image 2 */
     }
 
@@ -113,6 +116,5 @@
 
     .copyright {
         font-size: 12px;
-        line-height: 1.5;
     }
 }

@@ -5,7 +5,6 @@
     overflow: hidden;
     color: var(--bg-cream);
     font-family: var(--font-serif);
-    padding: var(--section-padding-desktop) var(--section-padding-inline);
 }
 
 /* Desktop: side-by-side columns */
@@ -14,14 +13,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 80px 60px;
     /* Center content */
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    /* border-right: 1px solid rgba(255, 255, 255, 0.1); */
     /* Subtle separator if needed, or remove */
+}
+
+.heroMobileColumn {
+    display: none;
 }
 
 .testimonialColumn {
     flex: 1;
-    /* padding: 80px 64px; */
+    padding: 80px 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -63,14 +67,16 @@
     .section {
         flex-direction: column;
         min-height: unset;
-        padding: var(--section-padding-mobile) 16px;
+        padding: 40px 16px;
     }
 
     .heroColumn {
-        flex: none;
-        padding: 64px 24px;
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: none;
+    }
+
+    .heroMobileColumn {
+        display: flex;
+        margin-bottom: 40px;
     }
 
     .heroTitle {
@@ -79,10 +85,11 @@
 
     .testimonialColumn {
         flex: none;
-        padding: 64px 24px;
+        padding: 0;
     }
 
     .testimonialText {
-        font-size: clamp(16px, 4vw, 20px);
+        font-size: clamp(24px, 4vw, 28px);
+        font-weight: 400;
     }
 }

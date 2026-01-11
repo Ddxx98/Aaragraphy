@@ -1,8 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Hero.module.css";
-import backgroundImage from "../../assets/hero.jpg";
+import backgroundImageFallback from "../../assets/hero.jpg";
+import { fetchFromWP, getImageUrl, getACF } from "../../utils/wpApi";
 
 const Hero = () => {
+  const [heroImage, setHeroImage] = useState(backgroundImageFallback);
+
+  useEffect(() => {
+    const loadHeroData = async () => {
+      try {
+        // Attempt to fetch 'home' page for hero data
+        const pages = await fetchFromWP('/pages', { slug: 'home' });
+        if (pages.length > 0) {
+          const acf = getACF(pages[0]);
+          setHeroImage(getImageUrl(acf.hero_background, backgroundImageFallback));
+        }
+      } catch (error) {
+        console.error("Failed to load dynamic hero image:", error);
+      }
+    };
+
+    loadHeroData();
+  }, []);
+
   return (
     <section
       className={styles.hero}
@@ -10,7 +30,7 @@ const Hero = () => {
         backgroundImage: `linear-gradient(
           rgba(0,0,0,0.2),
           rgba(0,0,0,0.2)
-        ), url(${backgroundImage})`,
+        ), url(${heroImage})`,
       }}
     >
       {/* Top Left: Circular Badge */}

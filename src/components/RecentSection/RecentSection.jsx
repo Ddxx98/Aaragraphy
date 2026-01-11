@@ -1,28 +1,64 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./RecentSection.module.css";
-import Couple from "../../assets/couple.jpg";
+import coupleFallback from "../../assets/couple.jpg";
+
+const STATIC_ITEMS = [
+  {
+    id: "engagement",
+    title: "Engagement",
+    groom: "Aniketh Russel",
+    bride: "Arunima David",
+    date: "2024-10-12",
+    image: coupleFallback
+  },
+  {
+    id: "wedding",
+    title: "Wedding",
+    groom: "Aniketh Russel",
+    bride: "Arunima David",
+    date: "2024-10-12",
+    image: coupleFallback
+  }
+];
 
 const RecentSection = () => {
   const navigate = useNavigate();
-  const items = [
-    {
-      id: 1,
-      title: "Engagement Shoots",
-      groom: "John",
-      bride: "Jane",
-      date: "2023-06-15",
-      image: Couple,
-    },
-    {
-      id: 2,
-      title: "Wedding Shoots",
-      groom: "John",
-      bride: "Jane",
-      date: "2023-06-15",
-      image: Couple,
-    },
-  ];
+  const [items, setItems] = useState(STATIC_ITEMS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadRecentPosts = async () => {
+      try {
+        // Fetch latest 2 posts with embedded media and ACF fields
+        const data = await fetchFromWP('/posts', {
+          per_page: 2,
+          _embed: 1
+        });
+
+        if (data && data.length > 0) {
+          const formattedItems = data.map(post => {
+            const acf = getACF(post);
+            return {
+              id: post.id,
+              title: post.title.rendered,
+              groom: acf.groom_name || "Groom",
+              bride: acf.bride_name || "Bride",
+              date: acf.event_date || post.date.split('T')[0],
+              image: getImageUrl(getFeaturedImage(post), STATIC_ITEMS[0].image)
+            };
+          });
+          setItems(formattedItems);
+        }
+      } catch (error) {
+        console.error("Failed to load recent posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecentPosts();
+  }, []);
 
   const handleBlogClick = (postId) => {
     navigate(`/blog/${postId}`);
@@ -34,6 +70,10 @@ const RecentSection = () => {
       handleBlogClick(postId);
     }
   };
+
+  if (loading) {
+    return <div style={{ padding: '60px', textAlign: 'center' }}>Loading recent captures...</div>;
+  }
 
   return (
     <section className={styles.section}>

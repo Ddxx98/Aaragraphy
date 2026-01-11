@@ -1,10 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./AboutUs.module.css";
-import meImage from "../../assets/profile.jpg";
+import meImageFallback from "../../assets/profile.jpg";
+import { fetchFromWP, getImageUrl, getACF } from "../../utils/wpApi";
+
+const STATIC_ABOUT_DATA = {
+    myStory: "A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our\ntime special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.",
+    whyPhotography: "A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our\ntime special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.",
+    values: "A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our\ntime special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.",
+    portrait: meImageFallback
+};
 
 const AboutUs = () => {
+    const [aboutData, setAboutData] = useState(STATIC_ABOUT_DATA);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadAboutData = async () => {
+            try {
+                const pages = await fetchFromWP('/pages', { slug: 'about' });
+                if (pages && pages.length > 0) {
+                    const acf = getACF(pages[0]);
+                    setAboutData({
+                        myStory: acf.my_story && acf.my_story.trim() !== "" ? acf.my_story : STATIC_ABOUT_DATA.myStory,
+                        whyPhotography: acf.why_photography && acf.why_photography.trim() !== "" ? acf.why_photography : STATIC_ABOUT_DATA.whyPhotography,
+                        values: acf.values && acf.values.trim() !== "" ? acf.values : STATIC_ABOUT_DATA.values,
+                        portrait: getImageUrl(acf.portrait, STATIC_ABOUT_DATA.portrait)
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to load dynamic about data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadAboutData();
+    }, []);
+
     const onContactClick = () => {
         window.location.href = "/contact";
+    }
+
+    if (loading) {
+        return <div style={{ padding: '100px', textAlign: 'center' }}>Loading about me...</div>;
     }
 
     return (
@@ -16,9 +54,7 @@ const AboutUs = () => {
                 <article className={`${styles.block} ${styles.blockStory}`}>
                     <h3 className={styles.blockTitle}>My Story</h3>
                     <p className={styles.blockText}>
-                        A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our
-                        <br></br>
-                        time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.
+                        {aboutData.myStory}
                     </p>
                 </article>
 
@@ -26,9 +62,7 @@ const AboutUs = () => {
                 <article className={`${styles.block} ${styles.blockWhy}`}>
                     <h3 className={styles.blockTitle}>Why Photography</h3>
                     <p className={styles.blockText}>
-                        A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our
-                        <br></br>
-                        time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.
+                        {aboutData.whyPhotography}
                     </p>
                 </article>
 
@@ -36,9 +70,7 @@ const AboutUs = () => {
                 <article className={`${styles.block} ${styles.blockValues}`}>
                     <h3 className={styles.blockTitle}>Values</h3>
                     <p className={styles.blockText}>
-                        A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our
-                        <br></br>
-                        time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.A good photographer, who actually made our time special and captured the important candid moments which we ourselve sdidn’t expected looks this great when we look back.
+                        {aboutData.values}
                     </p>
                 </article>
             </div>
@@ -47,7 +79,7 @@ const AboutUs = () => {
             <div className={styles.meWrapper}>
                 <div className={styles.meText}>Me</div>
                 <div className={styles.meImageWrapper}>
-                    <img src={meImage} alt="Photographer portrait" className={styles.meImage} />
+                    <img src={aboutData.portrait} alt="Photographer portrait" className={styles.meImage} />
                 </div>
             </div>
 

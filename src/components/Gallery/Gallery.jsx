@@ -1,25 +1,74 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Gallery.module.css";
-import HeroImage from "../../assets/hero.jpg";
-import ServiceImage from "../../assets/service.jpg";
-import CoupleImage from "../../assets/couple.jpg";
-import Couple2Image from "../../assets/couple 2.jpg";
-import CaptureImage from "../../assets/capture.jpg";
+import { fetchFromWP, getImageUrl } from "../../utils/wpApi";
+import fallbackImg1 from "../../assets/hero.jpg";
+import fallbackImg2 from "../../assets/capture.jpg";
+import fallbackImg3 from "../../assets/service.jpg";
+import fallbackImg4 from "../../assets/couple.jpg";
+import fallbackImg5 from "../../assets/couple 2.jpg";
+import fallbackImg6 from "../../assets/profile.jpg";
+import fallbackImg7 from "../../assets/wedding_ceremony.png";
+import fallbackImg8 from "../../assets/bride_portrait.png";
+import fallbackImg9 from "../../assets/rings_detail.png";
 
-const Gallery = ({viewAll}) => {
+const Gallery = ({ viewAll }) => {
     const navigate = useNavigate();
-    const galleryImages = [
-        { id: 1, src: HeroImage, alt: "Wedding moment 1" },
-        { id: 2, src: ServiceImage, alt: "Wedding moment 2" },
-        { id: 3, src: CoupleImage, alt: "Wedding moment 3" },
-        { id: 4, src: Couple2Image, alt: "Wedding moment 4" },
-        { id: 5, src: CaptureImage, alt: "Wedding moment 5" },
-        { id: 6, src: HeroImage, alt: "Wedding moment 6" },
-        { id: 7, src: ServiceImage, alt: "Wedding moment 7" },
-        { id: 8, src: CoupleImage, alt: "Wedding moment 8" },
-        { id: 9, src: Couple2Image, alt: "Wedding moment 9" },
+    const [galleryImages, setGalleryImages] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fallbackImages = [
+        { id: 'f1', src: fallbackImg1, alt: 'Gallery Fallback 1' },
+        { id: 'f2', src: fallbackImg2, alt: 'Gallery Fallback 2' },
+        { id: 'f3', src: fallbackImg3, alt: 'Gallery Fallback 3' },
+        { id: 'f4', src: fallbackImg4, alt: 'Gallery Fallback 4' },
+        { id: 'f5', src: fallbackImg5, alt: 'Gallery Fallback 5' },
+        { id: 'f6', src: fallbackImg6, alt: 'Gallery Fallback 6' },
+        { id: 'f7', src: fallbackImg7, alt: 'Gallery Fallback 7' },
+        { id: 'f8', src: fallbackImg8, alt: 'Gallery Fallback 8' },
+        { id: 'f9', src: fallbackImg9, alt: 'Gallery Fallback 9' },
     ];
+
+    useEffect(() => {
+        const loadGallery = async () => {
+            try {
+                // Fetch media items from WordPress
+                const data = await fetchFromWP('/media', {
+                    per_page: 9, // Fetch 9 images for the grid
+                    media_type: 'image'
+                });
+
+                let images = [];
+                if (data && data.length > 0) {
+                    images = data.map(item => ({
+                        id: item.id,
+                        src: getImageUrl(item.source_url, fallbackImages[0].src),
+                        alt: item.alt_text || item.title.rendered
+                    }));
+                }
+
+                // Ensure at least 9 images by padding with fallbacks
+                if (images.length < 9) {
+                    const remainingCount = 9 - images.length;
+                    const padding = fallbackImages.slice(images.length, 9);
+                    images = [...images, ...padding];
+                }
+
+                setGalleryImages(images);
+            } catch (error) {
+                console.error("Failed to load gallery images:", error);
+                setGalleryImages(fallbackImages);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadGallery();
+    }, []);
+
+    if (loading) {
+        return <div style={{ padding: '60px', textAlign: 'center' }}>Loading gallery...</div>;
+    }
 
     return (
         <section className={styles.section}>

@@ -1,39 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./ReviewSection.module.css";
-import Couple from "../../assets/couple 2.jpg";
+import { fetchFromWP, getFeaturedImage, getACF, getImageUrl } from "../../utils/wpApi";
+import coupleFallback from "../../assets/couple.jpg";
 
-const reviews = [
+const STATIC_REVIEWS = [
   {
-    id: 1,
-    image: Couple, // you replace
-    text: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn’t expect looks this great when we look back.",
-    authorLine: "by Vicky Kaushal – Bride's Brother",
+    id: "r1",
+    image: coupleFallback,
+    text: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn't expect looks this great when we look back.",
+    authorLine: "Happy Client",
     groom: "Aniketh Russel",
     bride: "Arunima David",
-    date: "14-10-2025",
-  },
-  {
-    id: 2,
-    image: Couple,
-    text: "They blended into the crowd and still managed to frame every precious second of the day. Looking at the photos feels like reliving the wedding all over again.",
-    authorLine: "by Rahul Menon – Best Man",
-    groom: "Aarav Nair",
-    bride: "Diya Sharma",
-    date: "02-02-2026",
-  },
-  {
-    id: 3,
-    image: Couple,
-    text: "Every frame feels cinematic yet honest. Our families still keep talking about how beautifully the emotions were captured.",
-    authorLine: "by Sneha Rao – Bride",
-    groom: "Rohit Rao",
-    bride: "Sneha Kulkarni",
-    date: "24-08-2025",
-  },
+    date: "2024-10-12",
+  }
 ];
 
 const ReviewSection = () => {
+  const [reviews, setReviews] = useState(STATIC_REVIEWS);
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        // Fetch reviews from custom post type 'reviews'
+        const data = await fetchFromWP('/reviews', { _embed: 1 });
+
+        if (data && data.length > 0) {
+          const formattedReviews = data.map(review => {
+            const acf = getACF(review);
+            return {
+              id: review.id,
+              image: getImageUrl(getFeaturedImage(review), STATIC_REVIEWS[0].image),
+              text: review.content.rendered.replace(/<[^>]*>?/gm, ''), // Strip HTML tags
+              authorLine: acf.author_line || "Happy Client",
+              groom: acf.groom_name || "Groom",
+              bride: acf.bride_name || "Bride",
+              date: acf.event_date || review.date.split('T')[0],
+            };
+          });
+          setReviews(formattedReviews);
+        }
+      } catch (error) {
+        console.error("Failed to load reviews:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadReviews();
+  }, []);
 
   const prev = () =>
     setIndex((prevIndex) =>
@@ -44,6 +60,12 @@ const ReviewSection = () => {
     setIndex((prevIndex) =>
       prevIndex === reviews.length - 1 ? 0 : prevIndex + 1
     );
+
+  if (loading) {
+    return <div style={{ padding: '60px', textAlign: 'center' }}>Loading love from people...</div>;
+  }
+
+  if (reviews.length === 0) return null;
 
   // current and next review for desktop two‑card layout
   const current = reviews[index];
@@ -71,7 +93,7 @@ const ReviewSection = () => {
             <div className={styles.imageWrapper}>
               <img
                 src={item.image}
-                alt={item.coupleLine}
+                alt={`${item.groom} & ${item.bride}`}
                 className={styles.image}
               />
             </div>

@@ -14,9 +14,9 @@
     align-items: center;
     justify-content: center;
     padding: 80px 60px;
-    /* Center content */
-    /* border-right: 1px solid rgba(255, 255, 255, 0.1); */
-    /* Subtle separator if needed, or remove */
+    background-image: url("../../assets/petals.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .heroMobileColumn {
@@ -24,6 +24,9 @@
 }
 
 .testimonialColumn {
+    background-image: url("../../assets/flower.jpg");
+    background-size: cover;
+    background-position: center;
     flex: 1;
     padding: 80px 60px;
     display: flex;
@@ -77,6 +80,9 @@
     .heroMobileColumn {
         display: flex;
         margin-bottom: 40px;
+        background-image: url("../../assets/petals.jpg");
+        background-size: cover;
+        background-position: center;
     }
 
     .heroTitle {
@@ -86,6 +92,8 @@
     .testimonialColumn {
         flex: none;
         padding: 0;
+        background-size: cover;
+        background-position: center;
     }
 
     .testimonialText {

@@ -1,53 +1,48 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ServiceImage from "../../assets/service.jpg";
+import ServiceImageFallback from "../../assets/service.jpg";
 import styles from "./Service.module.css";
+import { fetchFromWP, getImageUrl, getACF } from "../../utils/wpApi";
 
 const services = [
-    {
-        id: "engagement",
-        label: "Engagement shoots",
-    },
-    {
-        id: "wedding",
-        label: "Wedding",
-    },
-    {
-        id: "corporate",
-        label: "Corporate Events",
-    },
-    {
-        id: "baby",
-        label: "Baby Shower",
-    },
-    {
-        id: "travel",
-        label: "Travel",
-    },
-    {
-        id: "other",
-        label: "Other Things If Any",
-    },
+    { id: "engagement", label: "Engagement shoots" },
+    { id: "wedding", label: "Wedding" },
+    { id: "corporate", label: "Corporate Events" },
+    { id: "baby", label: "Baby Shower" },
+    { id: "travel", label: "Travel" },
+    { id: "other", label: "Other Things If Any" },
 ];
-
-const images = {
-    default: ServiceImage,
-    engagement: ServiceImage,
-    wedding: ServiceImage,
-    corporate: ServiceImage,
-    baby: ServiceImage,
-    travel: ServiceImage,
-    other: ServiceImage,
-};
 
 const Service = () => {
     const navigate = useNavigate();
-    // images is an object: { engagement: 'url', wedding: 'url', ... }
     const [activeId, setActiveId] = useState("wedding");
     const [isTouch, setIsTouch] = useState(false);
+    const [dynamicImages, setDynamicImages] = useState({});
 
     useEffect(() => {
-        // simple check: if device has no hover, treat as touch/mobile
+        const loadServiceData = async () => {
+            try {
+                const pages = await fetchFromWP('/pages', { slug: 'home' });
+                if (pages.length > 0) {
+                    const acf = getACF(pages[0]);
+                    setDynamicImages({
+                        engagement: getImageUrl(acf.service_engagement_image, ServiceImageFallback),
+                        wedding: getImageUrl(acf.service_wedding_image, ServiceImageFallback),
+                        corporate: getImageUrl(acf.service_corporate_image, ServiceImageFallback),
+                        baby: getImageUrl(acf.service_baby_image, ServiceImageFallback),
+                        travel: getImageUrl(acf.service_travel_image, ServiceImageFallback),
+                        other: getImageUrl(acf.service_other_image, ServiceImageFallback),
+                        default: ServiceImageFallback
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to load dynamic service images:", error);
+                setDynamicImages({ default: ServiceImageFallback });
+            }
+        };
+
+        loadServiceData();
+
         const mq = window.matchMedia("(hover: none)");
         setIsTouch(mq.matches);
         const handler = (e) => setIsTouch(e.matches);
@@ -82,7 +77,7 @@ const Service = () => {
                         style={
                             activeId === service.id
                                 ? {
-                                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${images[service.id] || images.default})`,
+                                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${dynamicImages[service.id] || dynamicImages.default || ServiceImageFallback})`,
                                 }
                                 : {}
                         }

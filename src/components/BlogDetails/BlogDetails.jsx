@@ -1,110 +1,120 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './BlogDetails.module.css';
+import { fetchFromWP, getFeaturedImage, getACF, getImageUrl } from '../../utils/wpApi';
 
-// Mock data dictionary
-const blogPosts = {
-    1: {
-        title: "Memoir of Nature",
-        author: "Aniketh Russel & Arunima David",
-        category: "Wedding",
-        date: "14 Oct 2025",
-        location: "South India, Bangalore",
-        mainImage: "/images/blog-1.jpg",
-        intro: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn’t expect look this great when we look back. A good photographer, who actually made our time special and captured the important candid moments.",
-        section1: {
-            title: "The Beginning",
-            text: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn’t expect look this great when we look back. A good photographer, who actually made our time special and captured the important candid moments.",
-            images: ["/images/blog-2.jpg", "/images/blog-3.jpg"]
-        },
-        section2: {
-            title: "The Ceremony",
-            text: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn’t expect look this great when we look back. A good photographer, who actually made our time special and captured the important candid moments.",
-            images: ["/images/blog-4.jpg", "/images/blog-5.jpg", "/images/blog-6.jpg"]
-        },
-        gallery: [
-            { src: "/images/blog-1.jpg", size: "large" },
-            { src: "/images/blog-2.jpg", size: "medium" },
-            { src: "/images/blog-3.jpg", size: "medium" },
-            { src: "/images/blog-4.jpg", size: "large" },
-            { src: "/images/blog-5.jpg", size: "medium" },
-            { src: "/images/blog-6.jpg", size: "medium" },
-        ]
+import coupleFallback from '../../assets/couple.jpg';
+import heroFallback from '../../assets/hero.jpg';
+import captureFallback from '../../assets/capture.jpg';
+import serviceFallback from '../../assets/service.jpg';
+import profileFallback from '../../assets/profile.jpg';
+import weddingCeremonyFallback from '../../assets/wedding_ceremony.png';
+import bridePortraitFallback from '../../assets/bride_portrait.png';
+import ringsDetailFallback from '../../assets/rings_detail.png';
+
+const STATIC_BLOG_DATA = {
+    title: "A Beautiful Wedding Story",
+    author: "Aniketh Russel & Arunima David",
+    category: "Wedding",
+    date: "2024-10-12",
+    location: "South India, Bangalore",
+    mainImage: coupleFallback,
+    intro: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn't expect looks this great when we look back. Every moment captured tells a unique story of love and celebration.",
+    section1: {
+        title: "The Beginning",
+        text: "Every story has a beginning, and this one was filled with laughter and joy. The atmosphere was electric, and every guest could feel the love in the air. We focused on capturing the raw emotions and the small details that made the day truly special.",
+        images: [heroFallback, captureFallback]
     },
-    2: {
-        title: "Urban Symphony",
-        author: "John Doe & Jane Smith",
-        category: "Corporate",
-        date: "20 Nov 2025",
-        location: "Mumbai, India",
-        mainImage: "/images/blog-2.jpg",
-        intro: "Capturing the essence of corporate life in the bustling city of Mumbai. A symphony of lights, people, and architecture coming together.",
-        section1: {
-            title: "The Office",
-            text: "Modern architecture meets functional design. We focused on the interplay of light and shadow in the corporate environment.",
-            images: ["/images/blog-1.jpg", "/images/blog-3.jpg"]
-        },
-        section2: {
-            title: "The Event",
-            text: "Networking and celebration. Capturing candid moments of connection and collaboration.",
-            images: ["/images/blog-4.jpg", "/images/blog-5.jpg", "/images/blog-6.jpg"]
-        },
-        gallery: [
-            { src: "/images/blog-2.jpg", size: "large" },
-            { src: "/images/blog-1.jpg", size: "medium" },
-            { src: "/images/blog-3.jpg", size: "medium" },
-            { src: "/images/blog-5.jpg", size: "large" },
-            { src: "/images/blog-4.jpg", size: "medium" },
-            { src: "/images/blog-6.jpg", size: "medium" },
-        ]
+    section2: {
+        title: "The Ceremony",
+        text: "The ceremony was a beautiful blend of tradition and modern elegance. The vows were heartfelt, and there wasn't a dry eye in the house. It was a privilege to be part of such an intimate and significant moment in their lives.",
+        images: [serviceFallback, coupleFallback, profileFallback]
     },
-    3: {
-        title: "Mountain Echoes",
-        author: "Alice & Bob",
-        category: "Travel",
-        date: "05 Dec 2025",
-        location: "Manali, Himachal Pradesh",
-        mainImage: "/images/blog-3.jpg",
-        intro: "The mountains are calling and we must go. A journey through the serene landscapes of the Himalayas.",
-        section1: {
-            title: "The Trek",
-            text: "Every step was a discovery. The crisp air and the breathtaking views made the difficult climb worth it.",
-            images: ["/images/blog-1.jpg", "/images/blog-2.jpg"]
-        },
-        section2: {
-            title: "The Summit",
-            text: "Standing at the top, looking down at the world below. A moment of peace and reflection.",
-            images: ["/images/blog-4.jpg", "/images/blog-5.jpg", "/images/blog-6.jpg"]
-        },
-        gallery: [
-            { src: "/images/blog-3.jpg", size: "large" },
-            { src: "/images/blog-1.jpg", size: "medium" },
-            { src: "/images/blog-2.jpg", size: "medium" },
-            { src: "/images/blog-6.jpg", size: "large" },
-            { src: "/images/blog-4.jpg", size: "medium" },
-            { src: "/images/blog-5.jpg", size: "medium" },
-        ]
-    }
+    gallery: [
+        { src: weddingCeremonyFallback, size: "large" },
+        { src: bridePortraitFallback, size: "medium" },
+        { src: ringsDetailFallback, size: "medium" }
+    ]
 };
 
 const BlogDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [blogData, setBlogData] = useState(STATIC_BLOG_DATA);
+    const [postIds, setPostIds] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // Get data for the specific ID, or fallback to the first one
-    const blogData = blogPosts[id] || blogPosts[1];
+    useEffect(() => {
+        const loadPostData = async () => {
+            setLoading(true);
+            try {
+                // Fetch current post
+                const post = await fetchFromWP(`/posts/${id}`, { _embed: 1 });
+
+                if (post) {
+                    const acf = getACF(post);
+
+                    // Fetch all post IDs for navigation
+                    const allPosts = await fetchFromWP('/posts', { _fields: 'id' });
+                    setPostIds(allPosts.map(p => p.id));
+
+                    // Map WP/ACF data to component structure
+                    const formattedData = {
+                        title: post.title.rendered,
+                        author: acf.author_name || STATIC_BLOG_DATA.author,
+                        category: post.categories_names?.[0] || STATIC_BLOG_DATA.category,
+                        date: acf.event_date || post.date.split('T')[0],
+                        location: acf.location || STATIC_BLOG_DATA.location,
+                        mainImage: getImageUrl(getFeaturedImage(post), STATIC_BLOG_DATA.mainImage),
+                        intro: post.excerpt.rendered.replace(/<[^>]*>?/gm, ''),
+                        section1: {
+                            title: acf.section1_title || STATIC_BLOG_DATA.section1.title,
+                            text: acf.section1_text || "",
+                            images: acf.section1_images?.map(img => getImageUrl(img, "")) || []
+                        },
+                        section2: {
+                            title: acf.section2_title || STATIC_BLOG_DATA.section2.title,
+                            text: acf.section2_text || "",
+                            images: acf.section2_images?.map(img => getImageUrl(img, "")) || []
+                        },
+                        gallery: acf.gallery_images?.map(img => ({
+                            src: getImageUrl(img.url, ""),
+                            size: img.size || "medium"
+                        })) || []
+                    };
+
+                    setBlogData(formattedData);
+                } else {
+                    setBlogData(STATIC_BLOG_DATA);
+                }
+            } catch (error) {
+                console.error("Failed to load blog details, using static fallback:", error);
+                setBlogData(STATIC_BLOG_DATA);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPostData();
+    }, [id]);
 
     // Navigation logic
-    const postIds = Object.keys(blogPosts).map(Number);
     const currentIndex = postIds.indexOf(Number(id));
-
     const prevId = currentIndex > 0 ? postIds[currentIndex - 1] : null;
     const nextId = currentIndex < postIds.length - 1 ? postIds[currentIndex + 1] : null;
 
     // Scroll to top on mount
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [id]); // Re-scroll when ID changes
+    }, [id]);
+
+    if (loading) {
+        return <div style={{ padding: '100px', textAlign: 'center' }}>Loading story details...</div>;
+    }
+
+    if (!blogData) {
+        return <div style={{ padding: '100px', textAlign: 'center' }}>Story not found.</div>;
+    }
 
     return (
         <div className={styles.container}>
@@ -153,39 +163,45 @@ const BlogDetails = () => {
                 <p className={styles.text}>{blogData.intro}</p>
 
                 {/* Section 1 */}
-                <div className={styles.contentBlock}>
-                    <h2 className={styles.sectionTitle}>{blogData.section1.title}</h2>
-                    <div className={styles.twoColGrid}>
-                        {blogData.section1.images.map((img, index) => (
-                            <div key={index} className={styles.gridImageWrapper}>
-                                <img src={img} alt={`Section 1 - ${index}`} className={styles.gridImage} />
-                            </div>
-                        ))}
+                {blogData.section1.text && (
+                    <div className={styles.contentBlock}>
+                        <h2 className={styles.sectionTitle}>{blogData.section1.title}</h2>
+                        <div className={styles.twoColGrid}>
+                            {blogData.section1.images.map((img, index) => (
+                                <div key={index} className={styles.gridImageWrapper}>
+                                    <img src={img} alt={`Section 1 - ${index}`} className={styles.gridImage} />
+                                </div>
+                            ))}
+                        </div>
+                        <p className={styles.text}>{blogData.section1.text}</p>
                     </div>
-                    <p className={styles.text}>{blogData.section1.text}</p>
-                </div>
+                )}
 
                 {/* Section 2 */}
-                <div className={styles.contentBlock}>
-                    <h2 className={styles.sectionTitle}>{blogData.section2.title}</h2>
-                    <div className={styles.threeColGrid}>
-                        {blogData.section2.images.map((img, index) => (
-                            <div key={index} className={styles.gridImageWrapper}>
-                                <img src={img} alt={`Section 2 - ${index}`} className={styles.gridImage} />
+                {blogData.section2.text && (
+                    <div className={styles.contentBlock}>
+                        <h2 className={styles.sectionTitle}>{blogData.section2.title}</h2>
+                        <div className={styles.threeColGrid}>
+                            {blogData.section2.images.map((img, index) => (
+                                <div key={index} className={styles.gridImageWrapper}>
+                                    <img src={img} alt={`Section 2 - ${index}`} className={styles.gridImage} />
+                                </div>
+                            ))}
+                        </div>
+                        <p className={styles.text}>{blogData.section2.text}</p>
+                    </div>
+                )}
+
+                {/* Bottom Gallery */}
+                {blogData.gallery.length > 0 && (
+                    <div className={styles.galleryGrid}>
+                        {blogData.gallery.map((item, index) => (
+                            <div key={index} className={`${styles.galleryItem} ${styles[item.size]}`}>
+                                <img src={item.src} alt={`Gallery ${index}`} className={styles.gridImage} />
                             </div>
                         ))}
                     </div>
-                    <p className={styles.text}>{blogData.section2.text}</p>
-                </div>
-
-                {/* Bottom Gallery */}
-                <div className={styles.galleryGrid}>
-                    {blogData.gallery.map((item, index) => (
-                        <div key={index} className={`${styles.galleryItem} ${styles[item.size]}`}>
-                            <img src={item.src} alt={`Gallery ${index}`} className={styles.gridImage} />
-                        </div>
-                    ))}
-                </div>
+                )}
 
                 {/* Bottom Navigation */}
                 <div className={styles.bottomNav}>

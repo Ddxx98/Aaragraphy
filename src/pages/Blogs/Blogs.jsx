@@ -1,65 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Blog from '../../components/Blog/Blog';
 import Gallery from '../../components/Gallery/Gallery';
 import ReviewSection from '../../components/ReviewSection/ReviewSection';
+import blogFallback from "../../assets/couple.jpg";
+
+const STATIC_POSTS = [
+    {
+        id: "engagement",
+        image: blogFallback,
+        title: "Engagement",
+        groom: "Aniketh Russel",
+        bride: "Arunima David",
+        date: "2024-10-12",
+        category: "Wedding"
+    },
+    {
+        id: "wedding",
+        image: blogFallback,
+        title: "Wedding",
+        groom: "Aniketh Russel",
+        bride: "Arunima David",
+        date: "2024-10-12",
+        category: "Wedding"
+    }
+];
 
 const Blogs = () => {
-    const blogPosts = [
-        {
-            id: 1,
-            image: "../src/assets/couple.jpg",
-            title: "Memoir of Nature",
-            groom: "Aniketh Russel",
-            bride: "Arunima David",
-            date: "14-10-2025",
-            category: "Wedding"
-        },
-        {
-            id: 2,
-            image: "../src/assets/couple.jpg",
-            title: "Memoir of Nature",
-            groom: "Aniketh Russel",
-            bride: "Arunima David",
-            date: "14-10-2025",
-            category: "Corporate"
-        },
-        {
-            id: 3,
-            image: "../src/assets/couple.jpg",
-            title: "Memoir of Nature",
-            groom: "Aniketh Russel",
-            bride: "Arunima David",
-            date: "14-10-2025",
-            category: "Travel"
-        },
-        {
-            id: 4,
-            image: "../src/assets/couple.jpg",
-            title: "Memoir of Nature",
-            groom: "Aniketh Russel",
-            bride: "Arunima David",
-            date: "14-10-2025",
-            category: "Baby Shower"
-        },
-        {
-            id: 5,
-            image: "../src/assets/couple.jpg",
-            title: "Memoir of Nature",
-            groom: "Aniketh Russel",
-            bride: "Arunima David",
-            date: "14-10-2025",
-            category: "Wedding"
-        },
-        {
-            id: 6,
-            image: "../src/assets/couple.jpg",
-            title: "Memoir of Nature",
-            groom: "Aniketh Russel",
-            bride: "Arunima David",
-            date: "14-10-2025",
-            category: "Travel"
-        }
-    ];
+    const [blogPosts, setBlogPosts] = useState(STATIC_POSTS);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadPosts = async () => {
+            try {
+                // Fetch posts with embedded media and ACF fields
+                const data = await fetchFromWP('/posts', { _embed: 1 });
+
+                if (data && data.length > 0) {
+                    const formattedPosts = data.map(post => {
+                        const acf = getACF(post);
+                        return {
+                            id: post.id,
+                            image: getImageUrl(getFeaturedImage(post), STATIC_POSTS[0].image),
+                            title: post.title.rendered,
+                            groom: acf.groom_name || "Groom",
+                            bride: acf.bride_name || "Bride",
+                            date: acf.event_date || post.date.split('T')[0],
+                            category: post.categories_names?.[0] || "Wedding"
+                        };
+                    });
+                    setBlogPosts(formattedPosts);
+                }
+            } catch (error) {
+                console.error("Failed to load blog posts:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPosts();
+    }, []);
+
+    if (loading) {
+        return <div style={{ padding: '100px', textAlign: 'center' }}>Loading stories...</div>;
+    }
+
     return (
         <div>
             <Blog posts={blogPosts} />

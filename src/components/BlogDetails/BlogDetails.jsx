@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './BlogDetails.module.css';
-import { fetchFromWP, getFeaturedImage, getACF, getImageUrl } from '../../utils/wpApi';
 import { getFromDB } from '../../utils/fbApi';
 
 import coupleFallback from '../../assets/couple.jpg';
@@ -12,6 +11,33 @@ import profileFallback from '../../assets/profile.jpg';
 import weddingCeremonyFallback from '../../assets/wedding_ceremony.png';
 import bridePortraitFallback from '../../assets/bride_portrait.png';
 import ringsDetailFallback from '../../assets/rings_detail.png';
+
+const STATIC_BLOG_DATA = {
+    title: "A Timeless Celebration",
+    author: "Aaragraphy",
+    groom: "Aniketh Russel",
+    bride: "Arunima David",
+    category: "Wedding",
+    date: "2024-10-12",
+    location: "Luttrellstown Castle, Dublin",
+    mainImage: heroFallback,
+    intro: "A beautiful day filled with love and laughter. Capturing the essence of a perfect wedding in one of Dublin's most iconic venues.",
+    section1: {
+        title: "The Morning Moments",
+        text: "The preparation was full of nervous excitement and beautiful details.",
+        images: [weddingCeremonyFallback, bridePortraitFallback]
+    },
+    section2: {
+        title: "Grand Reception",
+        text: "A night to remember with family and friends.",
+        images: [ringsDetailFallback, coupleFallback, captureFallback]
+    },
+    gallery: [
+        { src: weddingCeremonyFallback, size: 'large' },
+        { src: bridePortraitFallback, size: 'small' },
+        { src: ringsDetailFallback, size: 'small' }
+    ]
+};
 
 const BlogDetails = () => {
     const { id } = useParams();
@@ -31,31 +57,32 @@ const BlogDetails = () => {
                 if (allPosts) {
                     const ids = Array.isArray(allPosts)
                         ? allPosts.map(p => p.id)
-                        : Object.keys(allPosts);
-                    setPostIds(ids.map(Number));
+                        : Object.keys(allPosts).map(String);
+                    setPostIds(ids.map(Number).filter(n => !isNaN(n)));
                 }
 
                 if (firebaseData) {
                     setBlogData({
-                        title: firebaseData?.title || "Untitled Story",
-                        author: firebaseData?.author || "Aarography",
-                        groom: firebaseData?.groom || "",
-                        bride: firebaseData?.bride || "",
-                        category: firebaseData?.category || "Wedding",
-                        date: firebaseData?.date || "",
-                        location: firebaseData?.location || "",
-                        mainImage: firebaseData?.mainImage || heroFallback,
-                        intro: firebaseData?.intro || "",
-                        section1: firebaseData?.section1 || { title: "", text: "", images: [] },
-                        section2: firebaseData?.section2 || { title: "", text: "", images: [] },
-                        gallery: firebaseData?.gallery || []
+                        title: firebaseData?.title || STATIC_BLOG_DATA.title,
+                        author: firebaseData?.author || STATIC_BLOG_DATA.author,
+                        groom: firebaseData?.groom || STATIC_BLOG_DATA.groom,
+                        bride: firebaseData?.bride || STATIC_BLOG_DATA.bride,
+                        category: firebaseData?.category || STATIC_BLOG_DATA.category,
+                        date: firebaseData?.date || STATIC_BLOG_DATA.date,
+                        location: firebaseData?.location || STATIC_BLOG_DATA.location,
+                        mainImage: firebaseData?.mainImage || STATIC_BLOG_DATA.mainImage,
+                        intro: firebaseData?.intro || STATIC_BLOG_DATA.intro,
+                        section1: firebaseData?.section1 || STATIC_BLOG_DATA.section1,
+                        section2: firebaseData?.section2 || STATIC_BLOG_DATA.section2,
+                        gallery: firebaseData?.gallery || STATIC_BLOG_DATA.gallery
                     });
                 } else {
-                    setBlogData(null);
+                    // Fail gracefully to static data if not found in DB
+                    setBlogData(STATIC_BLOG_DATA);
                 }
             } catch (error) {
-                console.error("Failed to load blog details from Firebase:", error);
-                setBlogData(null);
+                console.error("Failed to load blog details from Firebase, using static fallback:", error);
+                setBlogData(STATIC_BLOG_DATA);
             } finally {
                 setLoading(false);
             }

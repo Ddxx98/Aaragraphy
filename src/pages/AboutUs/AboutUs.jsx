@@ -5,9 +5,9 @@ import { fetchFromWP, getImageUrl, getACF } from "../../utils/wpApi";
 import { getFromDB } from "../../utils/fbApi";
 
 const STATIC_ABOUT_DATA = {
-    myStory: "I’m originally from India and currently based in Dublin. By profession, I work in tech but photography has been a quiet constant in my life since college. What began as curiosity slowly became a way of seeing the world more clearly. Over the years, between code, deadlines, and relocations, the camera stayed with me. Eventually, it stopped being just a hobby and became something I wanted to take seriously. Photography, for me, isn’t a career switch, it’s a return to something I always carried with me.",
-    whyPhotography: "Photography lets me slow down in a world that’s always rushing. It helps me notice small, honest moments, expressions, light, pauses that often go unseen. I’m drawn to stories that feel real rather than staged, and images that age well over time. Coming from a tech background, I value intention and clarity, but photography gives me something different: emotion, instinct, and presence. It’s how I connect with people, places, and moments that matter beyond the frame.",
-    values: "I believe good photography starts with trust and patience. I value authenticity over perfection, simplicity over excess, and stories over trends. I approach every shoot with respect for the people, their time, and their moments. My goal is to create images that feel natural, personal, and lasting. Whether it’s a portrait or a fleeting moment, I aim to document it as it truly felt—not just how it looked.",
+    myStory: "We are originally from India and currently based in Dublin. By profession, we work in tech but photography has been a quiet constant in our lives since college. What began as curiosity slowly became a way of seeing the world more clearly. Over the years, between code, deadlines, and relocations, the camera stayed with us. Eventually, it stopped being just a hobby and became something we wanted to take seriously. Photography, for us, isn’t a career switch, it’s a return to something we always carried with us.",
+    whyPhotography: "Photography lets us slow down in a world that’s always rushing. It helps us notice small, honest moments, expressions, light, pauses that often go unseen. We’re drawn to stories that feel real rather than staged, and images that age well over time. Coming from a tech background, we value intention and clarity, but photography gives us something different: emotion, instinct, and presence. It’s how we connect with people, places, and moments that matter beyond the frame.",
+    values: "We believe good photography starts with trust and patience. We value authenticity over perfection, simplicity over excess, and stories over trends. We approach every shoot with respect for the people, their time, and their moments. Our goal is to create images that feel natural, personal, and lasting. Whether it’s a portrait or a fleeting moment, we aim to document it as it truly felt—not just how it looked.",
     portrait: meImageFallback
 };
 
@@ -91,7 +91,13 @@ const AboutUs = () => {
 
             {/* Me section with portrait */}
             <div className={styles.meWrapper}>
-                <div className={styles.meText}>Me</div>
+                <div className={styles.meText}>
+                    <h3 className={styles.teamTitle}>Our team</h3>
+                    <p className={styles.teamMember}>Photographer</p>
+                    <p className={styles.teamMember}>Editor</p>
+                    <p className={styles.teamMember}>Lightman</p>
+                    <p className={styles.teamMember}>Camera assistant</p>
+                </div>
                 <div className={styles.meImageWrapper}>
                     <img src={aboutData.portrait} alt="Photographer portrait" className={styles.meImage} />
                 </div>

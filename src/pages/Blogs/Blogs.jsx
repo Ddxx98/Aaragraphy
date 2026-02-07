@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Blog from '../../components/Blog/Blog';
 import Gallery from '../../components/Gallery/Gallery';
 import ReviewSection from '../../components/ReviewSection/ReviewSection';
-import { fetchFromWP, getImageUrl, getACF, getFeaturedImage } from "../../utils/wpApi";
-import { getFromDB } from "../../utils/fbApi";
 import blogFallback from "../../assets/couple.jpg";
 
 const STATIC_POSTS = [
     {
         id: "engagement",
         image: blogFallback,
-        title: "Engagement",
+        title: "Engagement Story",
         groom: "Aniketh Russel",
         bride: "Arunima David",
         date: "2024-10-12",
@@ -19,7 +17,7 @@ const STATIC_POSTS = [
     {
         id: "wedding",
         image: blogFallback,
-        title: "Wedding",
+        title: "Wedding Story",
         groom: "Aniketh Russel",
         bride: "Arunima David",
         date: "2024-10-12",
@@ -42,29 +40,10 @@ const Blogs = () => {
                         : Object.entries(firebaseData).map(([id, val]) => ({ id, ...val }));
                     setBlogPosts(postsArray);
                 } else {
-                    /* Commented out WordPress Dynamic Fetching
-                    const data = await fetchFromWP('/posts', { _embed: 1 });
-
-                    if (data && data.length > 0) {
-                        const formattedPosts = data.map(post => {
-                            const acf = getACF(post);
-                            return {
-                                id: post.id,
-                                image: getImageUrl(getFeaturedImage(post), STATIC_POSTS[0].image),
-                                title: post.title.rendered,
-                                groom: acf.groom_name || "Groom",
-                                bride: acf.bride_name || "Bride",
-                                date: acf.event_date || post.date.split('T')[0],
-                                category: post.categories_names?.[0] || "Wedding"
-                            };
-                        });
-                        setBlogPosts(formattedPosts);
-                    }
-                    */
                     setBlogPosts(STATIC_POSTS);
                 }
             } catch (error) {
-                console.error("Failed to load blog posts from Firebase:", error);
+                console.error("Failed to load blog posts from Firebase, using static fallback:", error);
                 setBlogPosts(STATIC_POSTS);
             } finally {
                 setLoading(false);

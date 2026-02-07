@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Footer.module.css";
-import CameraIcon from "../../assets/camera.png"
+import CameraIcon from "../../assets/camera.png";
+import { ArrowUpRight } from "lucide-react";
 
 const Footer = () => {
     return (
@@ -10,9 +11,12 @@ const Footer = () => {
                     <div className={styles.leftCol}>
                         <h3 className={styles.tagline}>Explore, Engage, Connect</h3>
                         <div className={styles.socialLinks}>
-                            <a href="#" className={styles.socialLink}>Instagram<span></span></a>
-                            <a href="#" className={styles.socialLink}>X (Prev Twitter)<span></span></a>
-                            <a href="#" className={styles.socialLink}>Youtube<span></span></a>
+                            <a href="https://www.instagram.com/aaragraphy.ie" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                                Instagram <ArrowUpRight size={18} className={styles.arrow} />
+                            </a>
+                            <a href="https://pin.it/O6Y3O4Pqh" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                                Pinterest <ArrowUpRight size={18} className={styles.arrow} />
+                            </a>
                         </div>
                     </div>
                     <div className={styles.rightCol}>

@@ -24,34 +24,31 @@ const ReviewSection = () => {
   useEffect(() => {
     const loadReviews = async () => {
       try {
-        // Firebase Fetching
-        const firebaseData = await getFromDB('reviews');
-        if (firebaseData && Array.isArray(firebaseData)) {
-          setReviews(firebaseData);
+        // Firebase Fetching - Use 'posts' to get sync'd review data
+        const firebaseData = await getFromDB('posts');
+        if (firebaseData) {
+          const postsArray = Array.isArray(firebaseData)
+            ? firebaseData
+            : Object.entries(firebaseData).map(([id, val]) => ({ id, ...val }));
+
+          // Sort by date (descending) and take first 2
+          const sorted = postsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+          const reviewPosts = sorted.slice(0, 2).map(post => ({
+            id: `rev-${post.id}`,
+            image: post.mainImage || coupleFallback,
+            text: post.reviewText || "A wonderful experience capturing our special moments.",
+            authorLine: post.reviewAuthor || "Happy Client",
+            groom: post.groom,
+            bride: post.bride,
+            date: post.date
+          }));
+
+          setReviews(reviewPosts.length > 0 ? reviewPosts : STATIC_REVIEWS);
         } else {
-          /* Commented out WordPress Dynamic Fetching
-          const data = await fetchFromWP('/reviews', { _embed: 1 });
-  
-          if (data && data.length > 0) {
-            const formattedReviews = data.map(review => {
-              const acf = getACF(review);
-              return {
-                id: review.id,
-                image: getImageUrl(getFeaturedImage(review), STATIC_REVIEWS[0].image),
-                text: review.content.rendered.replace(/<[^>]*>?/gm, ''), // Strip HTML tags
-                authorLine: acf.author_line || "Happy Client",
-                groom: acf.groom_name || "Groom",
-                bride: acf.bride_name || "Bride",
-                date: acf.event_date || review.date.split('T')[0],
-              };
-            });
-            setReviews(formattedReviews);
-          }
-          */
           setReviews(STATIC_REVIEWS);
         }
       } catch (error) {
-        console.error("Failed to load reviews from Firebase:", error);
+        console.error("Failed to load synced reviews from Firebase:", error);
         setReviews(STATIC_REVIEWS);
       } finally {
         setLoading(false);

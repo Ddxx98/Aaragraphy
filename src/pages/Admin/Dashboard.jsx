@@ -96,7 +96,6 @@ const Dashboard = () => {
         { id: 'about', label: 'About Us' },
         { id: 'gallery', label: 'Gallery' },
         { id: 'posts', label: 'Blog Posts' },
-        { id: 'recent_work', label: 'Recent Captures' },
         { id: 'reviews', label: 'Reviews' }
     ];
 
@@ -188,7 +187,7 @@ const Dashboard = () => {
                             onSaveAll={(val) => handleSave('posts', val)}
                             isSaving={saving}
                         />
-                    ) : (activeTab === 'gallery' || activeTab === 'recent_work' || activeTab === 'reviews') && (
+                    ) : (activeTab === 'gallery' || activeTab === 'reviews') && (
                         <ListEditor
                             label={activeTab}
                             initialData={data?.[activeTab] || []}
@@ -280,9 +279,7 @@ const ListEditor = ({ label, initialData, onSave, isSaving }) => {
             ? { id: Date.now(), text: "", authorLine: "", groom: "", bride: "", date: "", image: "" }
             : label === 'posts'
                 ? { id: Date.now(), title: "", groom: "", bride: "", location: "", intro: "", author: "", category: "", date: "", mainImage: "" }
-                : label === 'recent_work'
-                    ? { id: Date.now(), title: "", groom: "", bride: "", date: "", image: "" }
-                    : { id: Date.now(), src: "", alt: "" };
+                : { id: Date.now(), src: "", alt: "" };
         setItems(prev => [...prev, newItem]);
     };
 
@@ -700,6 +697,8 @@ const BlogManager = ({ initialData, onSaveAll, isSaving }) => {
 const BlogPostEditor = ({ post, onSave, isSaving }) => {
     const [formData, setFormData] = useState({
         ...post,
+        reviewText: post.reviewText || "",
+        reviewAuthor: post.reviewAuthor || "",
         section1: post.section1 || { title: "The Beginning", text: "", images: [] },
         section2: post.section2 || { title: "The Ceremony", text: "", images: [] },
         gallery: post.gallery || []
@@ -805,6 +804,22 @@ const BlogPostEditor = ({ post, onSave, isSaving }) => {
                     value={formData.intro}
                     onChange={(e) => handleChange('intro', e.target.value)}
                     placeholder="Short intro about the story..."
+                />
+
+                <h3 style={{ marginTop: '20px' }}>Review Blurb (For Home Page)</h3>
+                <label style={styles.label}>Review Quote</label>
+                <textarea
+                    style={{ ...styles.adminTextarea, minHeight: '80px' }}
+                    value={formData.reviewText}
+                    onChange={(e) => handleChange('reviewText', e.target.value)}
+                    placeholder="E.g. 'A good photographer, who actually made our time special...'"
+                />
+                <label style={styles.label}>Author Line</label>
+                <input
+                    style={styles.adminInput}
+                    value={formData.reviewAuthor}
+                    onChange={(e) => handleChange('reviewAuthor', e.target.value)}
+                    placeholder="E.g. 'Happy Client'"
                 />
             </div>
 

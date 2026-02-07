@@ -32,40 +32,26 @@ const RecentSection = () => {
   useEffect(() => {
     const loadRecentPosts = async () => {
       try {
-        // Firebase Fetching
-        const firebaseData = await getFromDB('recent_work');
-        if (firebaseData && Array.isArray(firebaseData)) {
-          setItems(firebaseData);
+        // Firebase Fetching - Use 'posts' instead of 'recent_work'
+        const firebaseData = await getFromDB('posts');
+        if (firebaseData) {
+          const postsArray = Array.isArray(firebaseData)
+            ? firebaseData
+            : Object.entries(firebaseData).map(([id, val]) => ({ id, ...val }));
+
+          // Sort by date (descending) and take first 2
+          const sorted = postsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+          const recents = sorted.slice(0, 2).map(post => ({
+            id: post.id,
+            title: post.title,
+            groom: post.groom,
+            bride: post.bride,
+            date: post.date,
+            image: post.mainImage || coupleFallback
+          }));
+
+          setItems(recents.length > 0 ? recents : STATIC_ITEMS);
         } else {
-          /* Commented out WordPress Dynamic Fetching
-          const categories = await fetchFromWP('/categories', { slug: 'recent-section' });
-  
-          let params = {
-            per_page: 2,
-            _embed: 1
-          };
-  
-          if (categories && categories.length > 0) {
-            params.categories = categories[0].id;
-          }
-  
-          const data = await fetchFromWP('/posts', params);
-  
-          if (data && data.length > 0) {
-            const formattedItems = data.map(post => {
-              const acf = getACF(post);
-              return {
-                id: post.id,
-                title: post.title.rendered,
-                groom: acf.groom_name || "Groom",
-                bride: acf.bride_name || "Bride",
-                date: acf.event_date || post.date.split('T')[0],
-                image: getImageUrl(getFeaturedImage(post), STATIC_ITEMS[0].image)
-              };
-            });
-            setItems(formattedItems);
-          }
-          */
           setItems(STATIC_ITEMS);
         }
       } catch (error) {

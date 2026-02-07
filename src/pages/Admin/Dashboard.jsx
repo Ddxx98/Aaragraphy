@@ -42,13 +42,12 @@ const Dashboard = () => {
         }
     };
 
-    const handleSave = async (path, content) => {
-        // Validation: Ensure no empty fields, but allow empty arrays if the whole list is deleted
+    const handleSave = async (path, content, bypassValidation = false) => {
+        // Validation: Ensure no empty fields
         const validate = (obj) => {
             if (obj === null || obj === undefined) return false;
             if (typeof obj === 'string') return obj.trim() !== "";
             if (Array.isArray(obj)) {
-                // Allow empty lists (so deletion can be saved)
                 if (obj.length === 0) return true;
                 return obj.every(item => validate(item));
             }
@@ -61,7 +60,7 @@ const Dashboard = () => {
             return true;
         };
 
-        if (!validate(content)) {
+        if (!bypassValidation && !validate(content)) {
             alert("All fields are required! Please fill in all text boxes and upload all images before saving.");
             return;
         }
@@ -164,30 +163,36 @@ const Dashboard = () => {
                 <div style={{ ...styles.editorArea, padding: isMobile ? '20px' : '30px' }}>
                     {activeTab === 'services' && (
                         <ServiceEditor
-                            initialData={data?.services}
-                            onSave={(val) => handleSave('services', val)}
+                            initialData={data?.services || {}}
+                            onSave={(val, bypass) => handleSave('services', val, bypass)}
                             isSaving={saving}
                         />
                     )}
                     {activeTab === 'hero' && (
                         <HeroEditor
                             initialData={data?.hero}
-                            onSave={(val) => handleSave('hero', val)}
+                            onSave={(val, bypass) => handleSave('hero', val, bypass)}
                             isSaving={saving}
                         />
                     )}
                     {activeTab === 'about' && (
                         <AboutEditor
                             initialData={data?.about}
-                            onSave={(val) => handleSave('about', val)}
+                            onSave={(val, bypass) => handleSave('about', val, bypass)}
                             isSaving={saving}
                         />
                     )}
-                    {(activeTab === 'gallery' || activeTab === 'recent_work' || activeTab === 'reviews' || activeTab === 'posts') && (
+                    {activeTab === 'posts' ? (
+                        <BlogManager
+                            initialData={data?.posts || []}
+                            onSaveAll={(val) => handleSave('posts', val)}
+                            isSaving={saving}
+                        />
+                    ) : (activeTab === 'gallery' || activeTab === 'recent_work' || activeTab === 'reviews') && (
                         <ListEditor
                             label={activeTab}
                             initialData={data?.[activeTab] || []}
-                            onSave={(val) => handleSave(activeTab, val)}
+                            onSave={(val, bypass) => handleSave(activeTab, val, bypass)}
                             isSaving={saving}
                         />
                     )}
@@ -300,12 +305,11 @@ const ListEditor = ({ label, initialData, onSave, isSaving }) => {
         const updatedItems = items.filter((_, i) => i !== index);
         setItems(updatedItems);
 
-        // 2. Persist to Firebase immediately (meets "delete from both" requirement)
+        // 2. Persist to Firebase immediately
         try {
-            await onSave(updatedItems);
+            await onSave(updatedItems, true); // Bypass validation for deletions
         } catch (err) {
             console.error("Failed to persist deletion to Firebase:", err);
-            // Optional: revert local state if save fails, but usually better to let user retry
         }
 
         // 3. Background WP cleanup
@@ -328,13 +332,13 @@ const ListEditor = ({ label, initialData, onSave, isSaving }) => {
 
     return (
         <div>
-            {items.map((item, idx) => (
+            {items?.map((item, idx) => (
                 <div key={idx} style={styles.itemCard}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                         <strong>Item #{idx + 1}</strong>
                         <button onClick={() => removeItem(idx)} style={styles.deleteBtn}>Delete</button>
                     </div>
-                    {Object.keys(item).map(key => (
+                    {Object.keys(item || {}).map(key => (
                         key !== 'id' && (
                             <div key={key} style={{ marginBottom: '10px' }}>
                                 <label style={styles.label}>{key.charAt(0).toUpperCase() + key.slice(1)} <span style={{ color: '#dc2626' }}>*</span></label>
@@ -404,7 +408,7 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
 
     const addPackage = () => {
         const newPkg = { title: "", duration: "", ideal_for: "", image: "", deliverables: [] };
-        setFormData(prev => ({ ...prev, packages: [...prev.packages, newPkg] }));
+        setFormData(prev => ({ ...prev, packages: [...(prev?.packages || []), newPkg] }));
     };
 
     const removePackage = async (index) => {
@@ -412,13 +416,13 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
         const mId = pkg.image_id;
 
         // 1. Update state immediately
-        const updatedPackages = formData.packages.filter((_, i) => i !== index);
+        const updatedPackages = (formData?.packages || []).filter((_, i) => i !== index);
         const updatedData = { ...formData, packages: updatedPackages };
         setFormData(updatedData);
 
         // 2. Persist to Firebase immediately
         try {
-            await onSave(updatedData);
+            await onSave(updatedData, true); // Bypass validation for removals
         } catch (err) {
             console.error("Failed to persist package removal:", err);
         }
@@ -452,7 +456,7 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
     return (
         <div>
             <h3 style={styles.sectionHeading}>Packages</h3>
-            {formData.packages.map((pkg, idx) => (
+            {formData?.packages?.map((pkg, idx) => (
                 <div key={idx} style={styles.itemCard}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                         <strong>Package #{idx + 1}</strong>
@@ -484,10 +488,10 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
                         placeholder="Image URL"
                     />
 
-                    <label style={styles.label}>Ideal For</label>
+                    <label style={styles.label}>Ideal For <span style={{ color: '#dc2626' }}>*</span></label>
                     <textarea style={styles.adminTextarea} value={pkg.ideal_for} onChange={(e) => updatePackage(idx, 'ideal_for', e.target.value)} placeholder="Ideal for..." />
 
-                    <label style={styles.label}>Deliverables (One per line)</label>
+                    <label style={styles.label}>Deliverables (One per line) <span style={{ color: '#dc2626' }}>*</span></label>
                     <textarea style={styles.adminTextarea} value={pkg.deliverables?.join('\n')} onChange={(e) => updatePackage(idx, 'deliverables', e.target.value.split('\n'))} placeholder="Deliverables (one per line)" />
                 </div>
             ))}
@@ -502,7 +506,7 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
             />
 
             <h3 style={styles.sectionHeading}>Note <span style={{ color: '#dc2626' }}>*</span></h3>
-            <textarea style={styles.adminTextarea} value={formData.notes} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))} />
+            <textarea style={styles.adminTextarea} value={formData?.notes || ""} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))} />
 
             <div style={{ marginTop: '30px' }}>
                 <button onClick={() => onSave(formData)} disabled={isSaving} style={styles.saveBtn}>
@@ -525,7 +529,7 @@ const HeroEditor = ({ initialData, onSave, isSaving }) => {
         <div style={styles.itemCard}>
             <label style={styles.label}>Background Image <span style={{ color: '#dc2626' }}>*</span></label>
             <ImageUploader
-                currentUrl={formData.image}
+                currentUrl={formData?.image}
                 label="hero"
                 onUpload={async (res) => {
                     if (formData.image_id) {
@@ -533,18 +537,24 @@ const HeroEditor = ({ initialData, onSave, isSaving }) => {
                     }
                     setFormData(prev => ({ ...prev, image: res.url, image_id: res.id }));
                 }}
-                onRemove={() => {
+                onRemove={async () => {
                     if (formData.image_id && !isNaN(Number(formData.image_id))) {
                         if (window.confirm("Permanently delete this image from WordPress?")) {
                             deleteFromWP(formData.image_id).catch(console.error);
                         }
                     }
-                    setFormData(prev => ({ ...prev, image: "", image_id: "" }));
+                    const updated = { ...formData, image: "", image_id: "" };
+                    setFormData(updated);
+                    try {
+                        await onSave(updated, true); // Bypass validation for image removal
+                    } catch (err) {
+                        console.error("Hero removal save failed:", err);
+                    }
                 }}
             />
             <input
                 style={styles.adminInput}
-                value={formData.image}
+                value={formData?.image || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
                 placeholder="Image URL"
             />
@@ -565,7 +575,7 @@ const AboutEditor = ({ initialData, onSave, isSaving }) => {
         <div style={styles.itemCard}>
             <label style={styles.label}>Portrait Image <span style={{ color: '#dc2626' }}>*</span></label>
             <ImageUploader
-                currentUrl={formData.portrait}
+                currentUrl={formData?.portrait}
                 label="about"
                 onUpload={async (res) => {
                     if (formData.portrait_id) {
@@ -573,33 +583,341 @@ const AboutEditor = ({ initialData, onSave, isSaving }) => {
                     }
                     setFormData(prev => ({ ...prev, portrait: res.url, portrait_id: res.id }));
                 }}
-                onRemove={() => {
+                onRemove={async () => {
                     if (formData.portrait_id && !isNaN(Number(formData.portrait_id))) {
                         if (window.confirm("Permanently delete this image from WordPress?")) {
                             deleteFromWP(formData.portrait_id).catch(console.error);
                         }
                     }
-                    setFormData(prev => ({ ...prev, portrait: "", portrait_id: "" }));
+                    const updated = { ...formData, portrait: "", portrait_id: "" };
+                    setFormData(updated);
+                    try {
+                        await onSave(updated, true); // Bypass validation for portrait removal
+                    } catch (err) {
+                        console.error("About removal save failed:", err);
+                    }
                 }}
             />
             <input
                 style={styles.adminInput}
-                value={formData.portrait}
+                value={formData?.portrait || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, portrait: e.target.value }))}
                 placeholder="Portrait URL"
             />
 
             <label style={styles.label}>My Story <span style={{ color: '#dc2626' }}>*</span></label>
-            <textarea style={styles.adminTextarea} value={formData.myStory} onChange={(e) => setFormData(prev => ({ ...prev, myStory: e.target.value }))} />
+            <textarea style={styles.adminTextarea} value={formData?.myStory || ""} onChange={(e) => setFormData(prev => ({ ...prev, myStory: e.target.value }))} />
             <label style={styles.label}>Why Photography <span style={{ color: '#dc2626' }}>*</span></label>
-            <textarea style={styles.adminTextarea} value={formData.whyPhotography} onChange={(e) => setFormData(prev => ({ ...prev, whyPhotography: e.target.value }))} />
+            <textarea style={styles.adminTextarea} value={formData?.whyPhotography || ""} onChange={(e) => setFormData(prev => ({ ...prev, whyPhotography: e.target.value }))} />
             <label style={styles.label}>Values <span style={{ color: '#dc2626' }}>*</span></label>
-            <textarea style={styles.adminTextarea} value={formData.values} onChange={(e) => setFormData(prev => ({ ...prev, values: e.target.value }))} />
+            <textarea style={styles.adminTextarea} value={formData?.values || ""} onChange={(e) => setFormData(prev => ({ ...prev, values: e.target.value }))} />
             <button onClick={() => onSave(formData)} disabled={isSaving} style={styles.saveBtn}>SAVE ABOUT</button>
         </div>
     );
 };
 
+const BlogManager = ({ initialData, onSaveAll, isSaving }) => {
+    const [posts, setPosts] = useState(Array.isArray(initialData) ? initialData : []);
+    const [editingPost, setEditingPost] = useState(null);
+
+    useEffect(() => {
+        if (Array.isArray(initialData)) {
+            setPosts(initialData);
+        }
+    }, [initialData]);
+
+    const addPost = () => {
+        const newPost = {
+            id: Date.now(),
+            title: "", author: "", category: "Wedding", date: new Date().toISOString().split('T')[0],
+            location: "", groom: "", bride: "", mainImage: "", intro: "",
+            section1: { title: "The Beginning", text: "", images: [] },
+            section2: { title: "The Ceremony", text: "", images: [] },
+            gallery: []
+        };
+        setPosts(prev => [...prev, newPost]);
+        setEditingPost(newPost);
+    };
+
+    const deletePost = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this story?")) return;
+        const updated = posts.filter(p => p.id !== id);
+        setPosts(updated);
+        await onSaveAll(updated, true);
+    };
+
+    const savePost = async (updatedPost) => {
+        const updatedPosts = posts.map(p => p.id === updatedPost.id ? updatedPost : p);
+        setPosts(updatedPosts);
+        await onSaveAll(updatedPosts);
+        setEditingPost(null);
+    };
+
+    if (editingPost) {
+        return (
+            <div>
+                <button
+                    onClick={() => setEditingPost(null)}
+                    style={{ ...styles.addBtn, width: 'auto', marginBottom: '20px', backgroundColor: '#f3f4f6' }}
+                >
+                    ← Back to Stories
+                </button>
+                <BlogPostEditor
+                    post={editingPost}
+                    onSave={savePost}
+                    isSaving={isSaving}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h3 style={{ margin: 0 }}>Stories ({posts?.length || 0})</h3>
+                <button onClick={addPost} style={{ ...styles.addBtn, width: 'auto' }}>+ New Story</button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
+                {posts?.map((post) => (
+                    <div key={post.id} style={styles.itemCard}>
+                        {post.mainImage && (
+                            <img src={post.mainImage} alt={post.title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px', marginBottom: '10px' }} />
+                        )}
+                        <h4 style={{ margin: '0 0 5px 0' }}>{post.title || "Untitled Story"}</h4>
+                        <p style={{ fontSize: '12px', color: '#666', marginBottom: '15px' }}>{post.date} • {post.category}</p>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button onClick={() => setEditingPost(post)} style={{ ...styles.saveBtn, padding: '5px 10px', fontSize: '12px' }}>Edit</button>
+                            <button onClick={() => deletePost(post.id)} style={styles.deleteBtn}>Delete</button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const BlogPostEditor = ({ post, onSave, isSaving }) => {
+    const [formData, setFormData] = useState({
+        ...post,
+        section1: post.section1 || { title: "The Beginning", text: "", images: [] },
+        section2: post.section2 || { title: "The Ceremony", text: "", images: [] },
+        gallery: post.gallery || []
+    });
+
+    const handleChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const updateSection = (sectionKey, field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [sectionKey]: { ...prev[sectionKey], [field]: value }
+        }));
+    };
+
+    const addImageToSection = (sectionKey, url, id) => {
+        setFormData(prev => ({
+            ...prev,
+            [sectionKey]: {
+                ...prev[sectionKey],
+                images: [...(prev[sectionKey].images || []), url],
+                image_ids: [...(prev[sectionKey].image_ids || []), id]
+            }
+        }));
+    };
+
+    const removeImageFromSection = (sectionKey, index) => {
+        setFormData(prev => {
+            const images = [...prev[sectionKey].images];
+            const ids = prev[sectionKey].image_ids ? [...prev[sectionKey].image_ids] : [];
+            images.splice(index, 1);
+            if (ids[index]) ids.splice(index, 1);
+            return {
+                ...prev,
+                [sectionKey]: { ...prev[sectionKey], images, image_ids: ids }
+            };
+        });
+    };
+
+    return (
+        <div>
+            <div style={styles.itemCard}>
+                <h3 style={{ marginTop: 0 }}>Basic Info</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                    <div>
+                        <label style={styles.label}>Post Title <span style={{ color: '#dc2626' }}>*</span></label>
+                        <input style={styles.adminInput} value={formData.title} onChange={(e) => handleChange('title', e.target.value)} placeholder="A Beautiful Wedding Story" />
+
+                        <label style={styles.label}>Author Name <span style={{ color: '#dc2626' }}>*</span></label>
+                        <input style={styles.adminInput} value={formData.author} onChange={(e) => handleChange('author', e.target.value)} placeholder="Aniketh Russel & Arunima David" />
+
+                        <label style={styles.label}>Category <span style={{ color: '#dc2626' }}>*</span></label>
+                        <select
+                            style={styles.adminInput}
+                            value={formData.category}
+                            onChange={(e) => handleChange('category', e.target.value)}
+                        >
+                            <option value="Wedding">Wedding</option>
+                            <option value="Engagement">Engagement</option>
+                            <option value="Event">Event</option>
+                            <option value="Portrait">Portrait</option>
+                            <option value="Branding">Branding</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style={styles.label}>Event Date <span style={{ color: '#dc2626' }}>*</span></label>
+                        <input type="date" style={styles.adminInput} value={formData.date} onChange={(e) => handleChange('date', e.target.value)} />
+
+                        <label style={styles.label}>Location <span style={{ color: '#dc2626' }}>*</span></label>
+                        <input style={styles.adminInput} value={formData.location} onChange={(e) => handleChange('location', e.target.value)} placeholder="South India, Bangalore" />
+
+                        <div style={{ display: 'flex', gap: '20px' }}>
+                            <div style={{ flex: 1 }}>
+                                <label style={styles.label}>Groom Name</label>
+                                <input style={styles.adminInput} value={formData.groom} onChange={(e) => handleChange('groom', e.target.value)} placeholder="Groom" />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <label style={styles.label}>Bride Name</label>
+                                <input style={styles.adminInput} value={formData.bride} onChange={(e) => handleChange('bride', e.target.value)} placeholder="Bride" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label style={styles.label}>Hero Image <span style={{ color: '#dc2626' }}>*</span></label>
+                <ImageUploader
+                    currentUrl={formData.mainImage}
+                    label="posts"
+                    onUpload={(res) => {
+                        handleChange('mainImage', res.url);
+                        handleChange('mainImage_id', res.id);
+                    }}
+                    onRemove={() => {
+                        handleChange('mainImage', "");
+                        handleChange('mainImage_id', "");
+                    }}
+                />
+
+                <label style={styles.label}>Introduction Text <span style={{ color: '#dc2626' }}>*</span></label>
+                <textarea
+                    style={{ ...styles.adminTextarea, minHeight: '100px' }}
+                    value={formData.intro}
+                    onChange={(e) => handleChange('intro', e.target.value)}
+                    placeholder="Short intro about the story..."
+                />
+            </div>
+
+            <div style={styles.itemCard}>
+                <h3>Section 1: {formData.section1?.title || "Beginning"}</h3>
+                <label style={styles.label}>Section Title</label>
+                <input style={styles.adminInput} value={formData.section1?.title} onChange={(e) => updateSection('section1', 'title', e.target.value)} />
+
+                <label style={styles.label}>Section Body Text</label>
+                <textarea
+                    style={{ ...styles.adminTextarea, minHeight: '120px' }}
+                    value={formData.section1?.text}
+                    onChange={(e) => updateSection('section1', 'text', e.target.value)}
+                />
+
+                <label style={styles.label}>Section Images (Recommended: 2)</label>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                    {formData.section1?.images?.map((url, i) => (
+                        <div key={i} style={{ position: 'relative' }}>
+                            <img src={url} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
+                            <button
+                                onClick={() => removeImageFromSection('section1', i)}
+                                style={{ position: 'absolute', top: -5, right: -5, width: 20, height: 20, borderRadius: '50%', border: 'none', backgroundColor: '#dc2626', color: 'white', cursor: 'pointer', fontSize: '10px' }}
+                            >
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <ImageUploader label="posts" onUpload={(res) => addImageToSection('section1', res.url, res.id)} />
+            </div>
+
+            <div style={styles.itemCard}>
+                <h3>Section 2: {formData.section2?.title || "The Ceremony"}</h3>
+                <label style={styles.label}>Section Title</label>
+                <input style={styles.adminInput} value={formData.section2?.title} onChange={(e) => updateSection('section2', 'title', e.target.value)} />
+
+                <label style={styles.label}>Section Body Text</label>
+                <textarea
+                    style={{ ...styles.adminTextarea, minHeight: '120px' }}
+                    value={formData.section2?.text}
+                    onChange={(e) => updateSection('section2', 'text', e.target.value)}
+                />
+
+                <label style={styles.label}>Section Images (Recommended: 3)</label>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                    {formData.section2?.images?.map((url, i) => (
+                        <div key={i} style={{ position: 'relative' }}>
+                            <img src={url} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
+                            <button
+                                onClick={() => removeImageFromSection('section2', i)}
+                                style={{ position: 'absolute', top: -5, right: -5, width: 20, height: 20, borderRadius: '50%', border: 'none', backgroundColor: '#dc2626', color: 'white', cursor: 'pointer', fontSize: '10px' }}
+                            >
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <ImageUploader label="posts" onUpload={(res) => addImageToSection('section2', res.url, res.id)} />
+            </div>
+
+            <div style={styles.itemCard}>
+                <h3>Story Gallery</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '15px' }}>
+                    {formData.gallery?.map((item, i) => (
+                        <div key={i} style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}>
+                            <img src={item.src} style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '2px' }} />
+                            <select
+                                style={{ ...styles.adminInput, marginTop: '5px', padding: '5px', fontSize: '11px' }}
+                                value={item.size}
+                                onChange={(e) => {
+                                    const newGallery = [...formData.gallery];
+                                    newGallery[i] = { ...newGallery[i], size: e.target.value };
+                                    handleChange('gallery', newGallery);
+                                }}
+                            >
+                                <option value="small">Small (1/3)</option>
+                                <option value="medium">Medium (1/2)</option>
+                                <option value="large">Large (Full)</option>
+                            </select>
+                            <button
+                                onClick={() => {
+                                    const newGallery = formData.gallery.filter((_, idx) => idx !== i);
+                                    handleChange('gallery', newGallery);
+                                }}
+                                style={{ ...styles.deleteBtn, width: '100%' }}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                    <div style={{ border: '2px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '160px', borderRadius: '4px' }}>
+                        <ImageUploader
+                            label="posts"
+                            onUpload={(res) => {
+                                const newImg = { src: res.url, src_id: res.id, size: "medium" };
+                                handleChange('gallery', [...(formData.gallery || []), newImg]);
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <button
+                onClick={() => onSave(formData)}
+                disabled={isSaving}
+                style={{ ...styles.saveBtn, position: 'sticky', bottom: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+            >
+                {isSaving ? 'UPLOADING AND SAVING...' : 'SAVE STORY'}
+            </button>
+        </div>
+    );
+};
 const styles = {
     container: { display: 'flex', height: '100vh', fontFamily: 'Instrument Sans, sans-serif' },
     sidebar: { width: '260px', backgroundColor: '#325735', color: 'white', padding: '30px', display: 'flex', flexDirection: 'column' },

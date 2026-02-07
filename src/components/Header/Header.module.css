@@ -19,6 +19,7 @@
 /* logo */
 .logo,
 .logoOverlay {
+  text-decoration: none;
   font-family: var(--font-serif);
   font-size: 32px;
   letter-spacing: 0.04em;

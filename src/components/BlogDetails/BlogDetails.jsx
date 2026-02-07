@@ -13,31 +13,6 @@ import weddingCeremonyFallback from '../../assets/wedding_ceremony.png';
 import bridePortraitFallback from '../../assets/bride_portrait.png';
 import ringsDetailFallback from '../../assets/rings_detail.png';
 
-const STATIC_BLOG_DATA = {
-    title: "A Beautiful Wedding Story",
-    author: "Aniketh Russel & Arunima David",
-    category: "Wedding",
-    date: "2024-10-12",
-    location: "South India, Bangalore",
-    mainImage: coupleFallback,
-    intro: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn't expect looks this great when we look back. Every moment captured tells a unique story of love and celebration.",
-    section1: {
-        title: "The Beginning",
-        text: "Every story has a beginning, and this one was filled with laughter and joy. The atmosphere was electric, and every guest could feel the love in the air. We focused on capturing the raw emotions and the small details that made the day truly special.",
-        images: [heroFallback, captureFallback]
-    },
-    section2: {
-        title: "The Ceremony",
-        text: "The ceremony was a beautiful blend of tradition and modern elegance. The vows were heartfelt, and there wasn't a dry eye in the house. It was a privilege to be part of such an intimate and significant moment in their lives.",
-        images: [serviceFallback, coupleFallback, profileFallback]
-    },
-    gallery: [
-        { src: weddingCeremonyFallback, size: "large" },
-        { src: bridePortraitFallback, size: "medium" },
-        { src: ringsDetailFallback, size: "medium" }
-    ]
-};
-
 const BlogDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -62,62 +37,25 @@ const BlogDetails = () => {
 
                 if (firebaseData) {
                     setBlogData({
-                        title: firebaseData.title || STATIC_BLOG_DATA.title,
-                        author: firebaseData.author || STATIC_BLOG_DATA.author,
-                        groom: firebaseData.groom || "",
-                        bride: firebaseData.bride || "",
-                        category: firebaseData.category || STATIC_BLOG_DATA.category,
-                        date: firebaseData.date || STATIC_BLOG_DATA.date,
-                        location: firebaseData.location || STATIC_BLOG_DATA.location,
-                        mainImage: firebaseData.mainImage || STATIC_BLOG_DATA.mainImage,
-                        intro: firebaseData.intro || STATIC_BLOG_DATA.intro,
-                        section1: firebaseData.section1 || STATIC_BLOG_DATA.section1,
-                        section2: firebaseData.section2 || STATIC_BLOG_DATA.section2,
-                        gallery: firebaseData.gallery || STATIC_BLOG_DATA.gallery
+                        title: firebaseData?.title || "Untitled Story",
+                        author: firebaseData?.author || "Aarography",
+                        groom: firebaseData?.groom || "",
+                        bride: firebaseData?.bride || "",
+                        category: firebaseData?.category || "Wedding",
+                        date: firebaseData?.date || "",
+                        location: firebaseData?.location || "",
+                        mainImage: firebaseData?.mainImage || heroFallback,
+                        intro: firebaseData?.intro || "",
+                        section1: firebaseData?.section1 || { title: "", text: "", images: [] },
+                        section2: firebaseData?.section2 || { title: "", text: "", images: [] },
+                        gallery: firebaseData?.gallery || []
                     });
                 } else {
-                    /* Commented out WordPress Dynamic Fetching
-                    const post = await fetchFromWP(`/posts/${id}`, { _embed: 1 });
-
-                    if (post) {
-                        const acf = getACF(post);
-                        const wpPosts = await fetchFromWP('/posts', { _fields: 'id' });
-                        setPostIds(wpPosts.map(p => p.id));
-
-                        const formattedData = {
-                            title: post.title.rendered,
-                            author: acf.author_name || STATIC_BLOG_DATA.author,
-                            category: post.categories_names?.[0] || STATIC_BLOG_DATA.category,
-                            date: acf.event_date || post.date.split('T')[0],
-                            location: acf.location || STATIC_BLOG_DATA.location,
-                            mainImage: getImageUrl(getFeaturedImage(post), STATIC_BLOG_DATA.mainImage),
-                            intro: post.excerpt.rendered.replace(/<[^>]*>?/gm, ''),
-                            section1: {
-                                title: acf.section1_title || STATIC_BLOG_DATA.section1.title,
-                                text: acf.section1_text || "",
-                                images: acf.section1_images?.map(img => getImageUrl(img, "")) || []
-                            },
-                            section2: {
-                                title: acf.section2_title || STATIC_BLOG_DATA.section2.title,
-                                text: acf.section2_text || "",
-                                images: acf.section2_images?.map(img => getImageUrl(img, "")) || []
-                            },
-                            gallery: acf.gallery_images?.map(img => ({
-                                src: getImageUrl(img.url, ""),
-                                size: img.size || "medium"
-                            })) || []
-                        };
-
-                        setBlogData(formattedData);
-                    } else {
-                        setBlogData(STATIC_BLOG_DATA);
-                    }
-                    */
-                    setBlogData(STATIC_BLOG_DATA);
+                    setBlogData(null);
                 }
             } catch (error) {
-                console.error("Failed to load blog details from Firebase, using static fallback:", error);
-                setBlogData(STATIC_BLOG_DATA);
+                console.error("Failed to load blog details from Firebase:", error);
+                setBlogData(null);
             } finally {
                 setLoading(false);
             }
@@ -141,7 +79,12 @@ const BlogDetails = () => {
     }
 
     if (!blogData) {
-        return <div style={{ padding: '100px', textAlign: 'center' }}>Story not found.</div>;
+        return (
+            <div style={{ padding: '100px', textAlign: 'center' }}>
+                <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: '32px' }}>Story not found</h2>
+                <button onClick={() => navigate('/blog')} style={{ marginTop: '20px', padding: '10px 20px', cursor: 'pointer' }}>Back to Blog</button>
+            </div>
+        );
     }
 
     return (

@@ -73,7 +73,7 @@
     object-fit: cover;
 }
 
-.deliverablesCol h4{
+.deliverablesCol h4 {
     color: #55584B;
 }
 
@@ -178,7 +178,7 @@
     }
 
     .mainTitle {
-        font-size: 48px;
+        font-size: clamp(32px, 10vw, 56px);
         margin-bottom: 70px;
         padding: 0 16px;
     }
@@ -191,17 +191,38 @@
     }
 
     .packageTitle {
-        font-size: 32px;
+        font-size: 28px;
+    }
+
+    .duration {
+        font-size: 1rem;
+        margin-bottom: 16px;
+    }
+
+    .subLabel,
+    .idealText,
+    .deliverablesList li,
+    .addonsList li {
+        font-size: 16px;
     }
 
     .addonsTitle {
-        font-size: 32px;
+        font-size: 28px;
     }
 
     .addonsSection,
     .notesSection {
         width: 93%;
+        margin-top: 60px;
         padding: 0 16px;
+    }
+
+    .deliverablesList {
+        margin-bottom: 24px;
+    }
+
+    .contactLink {
+        font-size: 20px;
     }
 
     .imageCol {

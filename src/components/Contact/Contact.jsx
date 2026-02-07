@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import emailjs from '@emailjs/browser';
 import styles from "./Contact.module.css";
 
 const ContactSection = ({ selectedPackage, packageNames = [] }) => {
@@ -41,22 +42,31 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
         setErrorMessage("");
 
         try {
-            const endpoint = import.meta.env.VITE_WP_CONTACT_FORM_ENDPOINT;
+            const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+            const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+            const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-            // Create FormData for WP compatibility (e.g., Contact Form 7)
-            const body = new FormData();
-            Object.keys(formData).forEach(key => {
-                body.append(key, formData[key]);
-            });
+            // Map formData to template parameters
+            const templateParams = {
+                name: formData.name,       // Matches {{name}} in your template
+                email: formData.email,     // Matches {{email}} in your template
+                message: formData.message, // Matches {{message}} in your template
+                title: `Inquiry: ${formData.eventType || 'General'}`, // Matches {{title}} in your subject
+                phone: formData.phone,
+                event_type: formData.eventType,
+                service_package: formData.servicePackage,
+                event_date: `${formData.fromDD}/${formData.fromMM}/${formData.fromYYYY}`,
+                location: formData.location,
+            };
 
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                body: body,
-            });
+            const response = await emailjs.send(
+                serviceId,
+                templateId,
+                templateParams,
+                publicKey
+            );
 
-            const result = await response.json();
-
-            if (response.ok && (result.status === 'mail_sent' || !result.status)) {
+            if (response.status === 200) {
                 setStatus("success");
                 setFormData({
                     name: "", email: "", phone: "", eventType: "", servicePackage: "",
@@ -64,12 +74,12 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                     location: "", message: ""
                 });
             } else {
-                throw new Error(result.message || "Something went wrong. Please try again.");
+                throw new Error("Failed to send message. Please try again later.");
             }
         } catch (error) {
-            console.error("Form submission error:", error);
+            console.error("EmailJS submission error:", error);
             setStatus("error");
-            setErrorMessage(error.message);
+            setErrorMessage(error.text || error.message || "Failed to send message.");
         }
     };
 
@@ -181,36 +191,56 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.label}>Date</label>
                                     <div className={styles.dateSplitRow}>
-                                        <input
-                                            type="text"
+                                        <select
                                             name="fromDD"
-                                            placeholder="DD"
-                                            maxLength="2"
-                                            className={styles.dateSplitInput}
+                                            className={styles.dateSelect}
                                             value={formData.fromDD}
                                             onChange={handleChange}
                                             disabled={status === "submitting"}
-                                        />
-                                        <input
-                                            type="text"
+                                        >
+                                            <option value="">DD</option>
+                                            {Array.from({ length: 31 }, (_, i) => (
+                                                <option key={i + 1} value={String(i + 1).padStart(2, '0')}>
+                                                    {String(i + 1).padStart(2, '0')}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        <select
                                             name="fromMM"
-                                            placeholder="MM"
-                                            maxLength="2"
-                                            className={styles.dateSplitInput}
+                                            className={styles.dateSelectMonth}
                                             value={formData.fromMM}
                                             onChange={handleChange}
                                             disabled={status === "submitting"}
-                                        />
-                                        <input
-                                            type="text"
+                                        >
+                                            <option value="">Month</option>
+                                            {[
+                                                "January", "February", "March", "April", "May", "June",
+                                                "July", "August", "September", "October", "November", "December"
+                                            ].map((month, index) => (
+                                                <option key={index} value={month}>
+                                                    {month}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        <select
                                             name="fromYYYY"
-                                            placeholder="YYYY"
-                                            maxLength="4"
-                                            className={styles.dateSplitInputYear}
+                                            className={styles.dateSelectYear}
                                             value={formData.fromYYYY}
                                             onChange={handleChange}
                                             disabled={status === "submitting"}
-                                        />
+                                        >
+                                            <option value="">YYYY</option>
+                                            {Array.from({ length: 6 }, (_, i) => {
+                                                const year = new Date().getFullYear() + i;
+                                                return (
+                                                    <option key={year} value={year}>
+                                                        {year}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
                                     </div>
                                 </div>
 

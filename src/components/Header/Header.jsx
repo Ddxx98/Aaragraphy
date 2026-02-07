@@ -4,6 +4,7 @@ import styles from "./Header.module.css";
 import menu from "../../assets/menu.svg";
 import close from "../../assets/close.svg";
 
+
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -18,7 +19,9 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <div className={styles.logo}>Aaragraphy</div>
+        <NavLink to="/" className={styles.logo}>
+          Aaragraphy
+        </NavLink>
 
         {/* Desktop nav */}
         <nav className={styles.navDesktop}>
@@ -51,7 +54,7 @@ const Header = () => {
         className={`${styles.mobileOverlay} ${isOpen ? styles.mobileOverlayOpen : ""}`}
       >
         <div className={styles.overlayHeader}>
-          <div className={styles.logoOverlay}>Aarography</div>
+          <div className={styles.logoOverlay}>Aaragraphy</div>
           <button
             className={`${styles.menuButton} ${styles.menuButtonOverlay} ${isOpen ? styles.menuButtonOpen : ""}`}
             onClick={handleToggle}

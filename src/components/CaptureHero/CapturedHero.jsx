@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./CapturedHero.module.css";
 import backgroundImageFallback from "../../assets/capture.jpg";
 import { fetchFromWP, getImageUrl, getACF } from "../../utils/wpApi";
+import { getFromDB } from "../../utils/fbApi";
 
 const CapturedHero = () => {
   const [heroImage, setHeroImage] = useState(backgroundImageFallback);
@@ -9,14 +10,21 @@ const CapturedHero = () => {
   useEffect(() => {
     const loadHeroData = async () => {
       try {
-        // Attempt to fetch 'home' page for section data
-        const pages = await fetchFromWP('/pages', { slug: 'home' });
-        if (pages.length > 0) {
-          const acf = getACF(pages[0]);
-          setHeroImage(getImageUrl(acf.captured_hero_background, backgroundImageFallback));
+        // Firebase Fetching
+        const firebaseData = await getFromDB('captured_hero');
+        if (firebaseData && firebaseData.image) {
+          setHeroImage(firebaseData.image);
+        } else {
+          /* Commented out WordPress Dynamic Fetching
+          const pages = await fetchFromWP('/pages', { slug: 'home' });
+          if (pages.length > 0) {
+            const acf = getACF(pages[0]);
+            setHeroImage(getImageUrl(acf.captured_hero_background, backgroundImageFallback));
+          }
+          */
         }
       } catch (error) {
-        console.error("Failed to load dynamic captured hero image:", error);
+        console.error("Failed to load dynamic captured hero image from Firebase:", error);
       }
     };
 

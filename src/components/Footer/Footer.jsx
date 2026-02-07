@@ -10,9 +10,9 @@ const Footer = () => {
                     <div className={styles.leftCol}>
                         <h3 className={styles.tagline}>Explore, Engage, Connect</h3>
                         <div className={styles.socialLinks}>
-                            <a href="#" className={styles.socialLink}>Instagram</a>
-                            <a href="#" className={styles.socialLink}>X (Prev Twitter)</a>
-                            <a href="#" className={styles.socialLink}>Youtube</a>
+                            <a href="#" className={styles.socialLink}>Instagram<span></span></a>
+                            <a href="#" className={styles.socialLink}>X (Prev Twitter)<span></span></a>
+                            <a href="#" className={styles.socialLink}>Youtube<span></span></a>
                         </div>
                     </div>
                     <div className={styles.rightCol}>

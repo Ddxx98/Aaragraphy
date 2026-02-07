@@ -1,25 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Contact.module.css";
 
-const ContactSection = () => {
+const ContactSection = ({ selectedPackage, packageNames = [] }) => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone: "",
         eventType: "",
-        days: "",
+        servicePackage: "",
         fromDD: "",
         fromMM: "",
         fromYYYY: "",
-        toDD: "",
-        toMM: "",
-        toYYYY: "",
         location: "",
         message: "",
     });
 
     const [status, setStatus] = useState("idle"); // idle, submitting, success, error
     const [errorMessage, setErrorMessage] = useState("");
+
+    // Update form when selectedPackage prop changes
+    useEffect(() => {
+        if (selectedPackage) {
+            setFormData(prev => ({
+                ...prev,
+                servicePackage: selectedPackage
+            }));
+        }
+    }, [selectedPackage]);
 
     const handleChange = (e) => {
         setFormData({
@@ -52,8 +59,8 @@ const ContactSection = () => {
             if (response.ok && (result.status === 'mail_sent' || !result.status)) {
                 setStatus("success");
                 setFormData({
-                    name: "", email: "", phone: "", eventType: "", days: "",
-                    fromDD: "", fromMM: "", fromYYYY: "", toDD: "", toMM: "", toYYYY: "",
+                    name: "", email: "", phone: "", eventType: "", servicePackage: "",
+                    fromDD: "", fromMM: "", fromYYYY: "",
                     location: "", message: ""
                 });
             } else {
@@ -67,7 +74,7 @@ const ContactSection = () => {
     };
 
     return (
-        <section className={styles.section}>
+        <section className={styles.section} id="contact">
             <div className={styles.container}>
                 <h2 className={styles.title}>Contact here</h2>
 
@@ -127,7 +134,7 @@ const ContactSection = () => {
                                     <input
                                         type="tel"
                                         name="phone"
-                                        placeholder="+00 9999999999"
+                                        placeholder="+353 9999999999"
                                         className={styles.input}
                                         value={formData.phone}
                                         onChange={handleChange}
@@ -153,25 +160,26 @@ const ContactSection = () => {
                                 </div>
 
                                 <div className={styles.fieldGroup}>
-                                    <label className={styles.label}>No. of Days to cover</label>
+                                    <label className={styles.label}>Service Package</label>
                                     <select
-                                        name="days"
+                                        name="servicePackage"
                                         className={styles.select}
-                                        value={formData.days}
+                                        value={formData.servicePackage}
                                         onChange={handleChange}
                                         disabled={status === "submitting"}
                                     >
                                         <option value="">Select here</option>
-                                        <option value="1">1 Day</option>
-                                        <option value="2">2 Days</option>
-                                        <option value="3">3 Days</option>
-                                        <option value="multiple">Multiple Days</option>
+                                        {packageNames.map((name, index) => (
+                                            <option key={index} value={name}>
+                                                {name}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
 
                                 {/* Date Section - From */}
                                 <div className={styles.fieldGroup}>
-                                    <label className={styles.label}>From</label>
+                                    <label className={styles.label}>Date</label>
                                     <div className={styles.dateSplitRow}>
                                         <input
                                             type="text"
@@ -200,43 +208,6 @@ const ContactSection = () => {
                                             maxLength="4"
                                             className={styles.dateSplitInputYear}
                                             value={formData.fromYYYY}
-                                            onChange={handleChange}
-                                            disabled={status === "submitting"}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Date Section - To */}
-                                <div className={styles.fieldGroup}>
-                                    <label className={styles.label}>To</label>
-                                    <div className={styles.dateSplitRow}>
-                                        <input
-                                            type="text"
-                                            name="toDD"
-                                            placeholder="DD"
-                                            maxLength="2"
-                                            className={styles.dateSplitInput}
-                                            value={formData.toDD}
-                                            onChange={handleChange}
-                                            disabled={status === "submitting"}
-                                        />
-                                        <input
-                                            type="text"
-                                            name="toMM"
-                                            placeholder="MM"
-                                            maxLength="2"
-                                            className={styles.dateSplitInput}
-                                            value={formData.toMM}
-                                            onChange={handleChange}
-                                            disabled={status === "submitting"}
-                                        />
-                                        <input
-                                            type="text"
-                                            name="toYYYY"
-                                            placeholder="YYYY"
-                                            maxLength="4"
-                                            className={styles.dateSplitInputYear}
-                                            value={formData.toYYYY}
                                             onChange={handleChange}
                                             disabled={status === "submitting"}
                                         />

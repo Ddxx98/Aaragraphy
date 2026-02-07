@@ -1,48 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ServiceImageFallback from "../../assets/service.jpg";
 import styles from "./Service.module.css";
-import { fetchFromWP, getImageUrl, getACF } from "../../utils/wpApi";
+import weddingImg from "../../assets/service/wedding.jpg";
+import ceremoniesImg from "../../assets/service/ceremonies.jpg";
+import corporateImg from "../../assets/service/corporate.jpg";
+import travelImg from "../../assets/service/travel.jpg";
+import casualImg from "../../assets/service/casual.jpg";
+import babyImg from "../../assets/service/baby.jpg";
 
 const services = [
-    { id: "engagement", label: "Engagement shoots" },
-    { id: "wedding", label: "Wedding" },
-    { id: "corporate", label: "Corporate Events" },
-    { id: "baby", label: "Baby Shower" },
-    { id: "travel", label: "Travel" },
-    { id: "other", label: "Other Things If Any" },
+    { id: "wedding", label: "Wedding", image: weddingImg },
+    { id: "ceremonies", label: "Ceremonies", image: ceremoniesImg },
+    { id: "corporate", label: "Corporate Events", image: corporateImg },
+    { id: "travel", label: "Travel", image: travelImg },
+    { id: "casual", label: "Casual Shoot", image: casualImg },
+    { id: "baby", label: "Baby Shoot", image: babyImg },
 ];
 
 const Service = () => {
     const navigate = useNavigate();
     const [activeId, setActiveId] = useState("wedding");
     const [isTouch, setIsTouch] = useState(false);
-    const [dynamicImages, setDynamicImages] = useState({});
 
     useEffect(() => {
-        const loadServiceData = async () => {
-            try {
-                const pages = await fetchFromWP('/pages', { slug: 'home' });
-                if (pages.length > 0) {
-                    const acf = getACF(pages[0]);
-                    setDynamicImages({
-                        engagement: getImageUrl(acf.service_engagement_image, ServiceImageFallback),
-                        wedding: getImageUrl(acf.service_wedding_image, ServiceImageFallback),
-                        corporate: getImageUrl(acf.service_corporate_image, ServiceImageFallback),
-                        baby: getImageUrl(acf.service_baby_image, ServiceImageFallback),
-                        travel: getImageUrl(acf.service_travel_image, ServiceImageFallback),
-                        other: getImageUrl(acf.service_other_image, ServiceImageFallback),
-                        default: ServiceImageFallback
-                    });
-                }
-            } catch (error) {
-                console.error("Failed to load dynamic service images:", error);
-                setDynamicImages({ default: ServiceImageFallback });
-            }
-        };
-
-        loadServiceData();
-
         const mq = window.matchMedia("(hover: none)");
         setIsTouch(mq.matches);
         const handler = (e) => setIsTouch(e.matches);
@@ -77,7 +57,7 @@ const Service = () => {
                         style={
                             activeId === service.id
                                 ? {
-                                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${dynamicImages[service.id] || dynamicImages.default || ServiceImageFallback})`,
+                                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${service.image})`,
                                 }
                                 : {}
                         }

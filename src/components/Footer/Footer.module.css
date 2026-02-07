@@ -55,14 +55,16 @@
 /* Right Column: Camera */
 .rightCol {
     display: flex;
-    align-items: flex-start;
+    padding: 0;
+    margin: 0;
 }
 
 .cameraIcon {
     width: 120px;
     /* Adjust size as needed */
     height: auto;
-    opacity: 0.9;
+    padding: 0;
+    margin: 0;
 }
 
 /* Bottom Row: Copyright */
@@ -107,7 +109,8 @@
 
     /* Camera below socials on mobile */
     .rightCol {
-        margin-top: 0;
+        margin: 0;
+        padding: 0;
     }
 
     .cameraIcon {

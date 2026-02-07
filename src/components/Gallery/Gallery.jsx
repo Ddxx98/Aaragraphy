@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Gallery.module.css";
 import { fetchFromWP, getImageUrl } from "../../utils/wpApi";
+import { getFromDB } from "../../utils/fbApi";
 import fallbackImg1 from "../../assets/hero.jpg";
 import fallbackImg2 from "../../assets/capture.jpg";
-import fallbackImg3 from "../../assets/service.jpg";
+import fallbackImg3 from "../../assets/couple.jpg";
 import fallbackImg4 from "../../assets/couple.jpg";
 import fallbackImg5 from "../../assets/couple 2.jpg";
 import fallbackImg6 from "../../assets/profile.jpg";
@@ -32,31 +33,38 @@ const Gallery = ({ viewAll }) => {
     useEffect(() => {
         const loadGallery = async () => {
             try {
-                // Fetch media items from WordPress
-                const data = await fetchFromWP('/media', {
-                    per_page: 9, // Fetch 9 images for the grid
-                    media_type: 'image'
-                });
+                // Firebase Fetching
+                const firebaseData = await getFromDB('gallery');
+                if (firebaseData && Array.isArray(firebaseData)) {
+                    setGalleryImages(firebaseData);
+                } else {
+                    /* Commented out WordPress Dynamic Fetching
+                    const data = await fetchFromWP('/media', {
+                        per_page: 9,
+                        media_type: 'image'
+                    });
 
-                let images = [];
-                if (data && data.length > 0) {
-                    images = data.map(item => ({
-                        id: item.id,
-                        src: getImageUrl(item.source_url, fallbackImages[0].src),
-                        alt: item.alt_text || item.title.rendered
-                    }));
+                    let images = [];
+                    if (data && data.length > 0) {
+                        images = data.map(item => ({
+                            id: item.id,
+                            src: getImageUrl(item.source_url, fallbackImages[0].src),
+                            alt: item.alt_text || item.title.rendered
+                        }));
+                    }
+
+                    if (images.length < 9) {
+                        const remainingCount = 9 - images.length;
+                        const padding = fallbackImages.slice(images.length, 9);
+                        images = [...images, ...padding];
+                    }
+
+                    setGalleryImages(images);
+                    */
+                    setGalleryImages(fallbackImages);
                 }
-
-                // Ensure at least 9 images by padding with fallbacks
-                if (images.length < 9) {
-                    const remainingCount = 9 - images.length;
-                    const padding = fallbackImages.slice(images.length, 9);
-                    images = [...images, ...padding];
-                }
-
-                setGalleryImages(images);
             } catch (error) {
-                console.error("Failed to load gallery images:", error);
+                console.error("Failed to load gallery images from Firebase:", error);
                 setGalleryImages(fallbackImages);
             } finally {
                 setLoading(false);

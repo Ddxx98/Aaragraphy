@@ -21,7 +21,7 @@
   --section-padding-desktop: 80px;
   --section-padding-mobile: 64px;
   --section-padding-inline: 40px;
-  --container-max-width: 1200px;
+  --container-max-width: 100%;
 }
 
 /* Container utility for consistent max-widths */

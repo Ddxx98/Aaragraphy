@@ -1,6 +1,6 @@
 .section {
     font-family: var(--font-serif);
-    padding: var(--section-padding-desktop) 40px;
+    padding: var(--section-padding-desktop) var(--section-padding-inline);
     background-color: var(--bg-cream);
 }
 

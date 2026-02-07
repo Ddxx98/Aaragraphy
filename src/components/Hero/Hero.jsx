@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./Hero.module.css";
 import backgroundImageFallback from "../../assets/hero.jpg";
 import { fetchFromWP, getImageUrl, getACF } from "../../utils/wpApi";
+import { getFromDB } from "../../utils/fbApi";
 
 const Hero = () => {
   const [heroImage, setHeroImage] = useState(backgroundImageFallback);
@@ -9,14 +10,21 @@ const Hero = () => {
   useEffect(() => {
     const loadHeroData = async () => {
       try {
-        // Attempt to fetch 'home' page for hero data
+        // Firebase Fetching
+        const firebaseData = await getFromDB('hero');
+        if (firebaseData && firebaseData.image) {
+          setHeroImage(firebaseData.image);
+        }
+
+        /* Commented out WordPress Dynamic Fetching
         const pages = await fetchFromWP('/pages', { slug: 'home' });
         if (pages.length > 0) {
           const acf = getACF(pages[0]);
           setHeroImage(getImageUrl(acf.hero_background, backgroundImageFallback));
         }
+        */
       } catch (error) {
-        console.error("Failed to load dynamic hero image:", error);
+        console.error("Failed to load dynamic hero image from Firebase:", error);
       }
     };
 
@@ -73,12 +81,12 @@ const Hero = () => {
       <div className={styles.marqueeWrapper}>
         <div className={styles.marqueeInner}>
           <div className={styles.marqueeContent}>
-            <span>Every photograph is a memory deciding how it will be remembered&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-            <span>Every photograph is a memory deciding how it will be remembered&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+            <span>Photographing Life As It Happens&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+            <span>Photographing Life As It Happens&nbsp;&nbsp;•&nbsp;&nbsp;</span>
           </div>
           <div className={styles.marqueeContent}>
-            <span>Every photograph is a memory deciding how it will be remembered&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-            <span>Every photograph is a memory deciding how it will be remembered&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+            <span>Photographing Life As It Happens&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+            <span>Photographing Life As It Happens&nbsp;&nbsp;•&nbsp;&nbsp;</span>
           </div>
         </div>
       </div>

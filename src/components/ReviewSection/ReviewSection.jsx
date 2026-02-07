@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ReviewSection.module.css";
 import { fetchFromWP, getFeaturedImage, getACF, getImageUrl } from "../../utils/wpApi";
+import { getFromDB } from "../../utils/fbApi";
 import coupleFallback from "../../assets/couple.jpg";
 
 const STATIC_REVIEWS = [
@@ -23,26 +24,35 @@ const ReviewSection = () => {
   useEffect(() => {
     const loadReviews = async () => {
       try {
-        // Fetch reviews from custom post type 'reviews'
-        const data = await fetchFromWP('/reviews', { _embed: 1 });
-
-        if (data && data.length > 0) {
-          const formattedReviews = data.map(review => {
-            const acf = getACF(review);
-            return {
-              id: review.id,
-              image: getImageUrl(getFeaturedImage(review), STATIC_REVIEWS[0].image),
-              text: review.content.rendered.replace(/<[^>]*>?/gm, ''), // Strip HTML tags
-              authorLine: acf.author_line || "Happy Client",
-              groom: acf.groom_name || "Groom",
-              bride: acf.bride_name || "Bride",
-              date: acf.event_date || review.date.split('T')[0],
-            };
-          });
-          setReviews(formattedReviews);
+        // Firebase Fetching
+        const firebaseData = await getFromDB('reviews');
+        if (firebaseData && Array.isArray(firebaseData)) {
+          setReviews(firebaseData);
+        } else {
+          /* Commented out WordPress Dynamic Fetching
+          const data = await fetchFromWP('/reviews', { _embed: 1 });
+  
+          if (data && data.length > 0) {
+            const formattedReviews = data.map(review => {
+              const acf = getACF(review);
+              return {
+                id: review.id,
+                image: getImageUrl(getFeaturedImage(review), STATIC_REVIEWS[0].image),
+                text: review.content.rendered.replace(/<[^>]*>?/gm, ''), // Strip HTML tags
+                authorLine: acf.author_line || "Happy Client",
+                groom: acf.groom_name || "Groom",
+                bride: acf.bride_name || "Bride",
+                date: acf.event_date || review.date.split('T')[0],
+              };
+            });
+            setReviews(formattedReviews);
+          }
+          */
+          setReviews(STATIC_REVIEWS);
         }
       } catch (error) {
-        console.error("Failed to load reviews:", error);
+        console.error("Failed to load reviews from Firebase:", error);
+        setReviews(STATIC_REVIEWS);
       } finally {
         setLoading(false);
       }

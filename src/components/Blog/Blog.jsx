@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Blog.module.css";
+import ArrowDropdown from "../../assets/arrow_drop_down.svg";
 
 const Blog = ({ posts = [] }) => {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ const Blog = ({ posts = [] }) => {
             className={styles.dropdownTrigger}
             onClick={toggleCategoryDropdown}
           >
-            {activeCategory} <span className={styles.arrow}>▼</span>
+            {activeCategory} <img src={ArrowDropdown} alt="Dropdown Arrow" className={styles.arrow} />
           </button>
           {isCategoryOpen && (
             <div className={styles.dropdownMenu}>
@@ -107,7 +108,7 @@ const Blog = ({ posts = [] }) => {
             className={styles.dropdownTrigger}
             onClick={toggleViewDropdown}
           >
-            {activeView} <span className={styles.arrow}>▼</span>
+            {activeView} <img src={ArrowDropdown} alt="Dropdown Arrow" className={styles.arrow} />
           </button>
           {isViewOpen && (
             <div className={styles.dropdownMenu}>

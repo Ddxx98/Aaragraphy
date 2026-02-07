@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './BlogDetails.module.css';
 import { fetchFromWP, getFeaturedImage, getACF, getImageUrl } from '../../utils/wpApi';
+import { getFromDB } from '../../utils/fbApi';
 
 import coupleFallback from '../../assets/couple.jpg';
 import heroFallback from '../../assets/hero.jpg';
 import captureFallback from '../../assets/capture.jpg';
-import serviceFallback from '../../assets/service.jpg';
+import serviceFallback from '../../assets/couple.jpg';
 import profileFallback from '../../assets/profile.jpg';
 import weddingCeremonyFallback from '../../assets/wedding_ceremony.png';
 import bridePortraitFallback from '../../assets/bride_portrait.png';
@@ -48,47 +49,74 @@ const BlogDetails = () => {
         const loadPostData = async () => {
             setLoading(true);
             try {
-                // Fetch current post
-                const post = await fetchFromWP(`/posts/${id}`, { _embed: 1 });
+                // Firebase Fetching
+                const firebaseData = await getFromDB(`posts/${id}`);
+                const allPosts = await getFromDB('posts');
 
-                if (post) {
-                    const acf = getACF(post);
+                if (allPosts) {
+                    const ids = Array.isArray(allPosts)
+                        ? allPosts.map(p => p.id)
+                        : Object.keys(allPosts);
+                    setPostIds(ids.map(Number));
+                }
 
-                    // Fetch all post IDs for navigation
-                    const allPosts = await fetchFromWP('/posts', { _fields: 'id' });
-                    setPostIds(allPosts.map(p => p.id));
-
-                    // Map WP/ACF data to component structure
-                    const formattedData = {
-                        title: post.title.rendered,
-                        author: acf.author_name || STATIC_BLOG_DATA.author,
-                        category: post.categories_names?.[0] || STATIC_BLOG_DATA.category,
-                        date: acf.event_date || post.date.split('T')[0],
-                        location: acf.location || STATIC_BLOG_DATA.location,
-                        mainImage: getImageUrl(getFeaturedImage(post), STATIC_BLOG_DATA.mainImage),
-                        intro: post.excerpt.rendered.replace(/<[^>]*>?/gm, ''),
-                        section1: {
-                            title: acf.section1_title || STATIC_BLOG_DATA.section1.title,
-                            text: acf.section1_text || "",
-                            images: acf.section1_images?.map(img => getImageUrl(img, "")) || []
-                        },
-                        section2: {
-                            title: acf.section2_title || STATIC_BLOG_DATA.section2.title,
-                            text: acf.section2_text || "",
-                            images: acf.section2_images?.map(img => getImageUrl(img, "")) || []
-                        },
-                        gallery: acf.gallery_images?.map(img => ({
-                            src: getImageUrl(img.url, ""),
-                            size: img.size || "medium"
-                        })) || []
-                    };
-
-                    setBlogData(formattedData);
+                if (firebaseData) {
+                    setBlogData({
+                        title: firebaseData.title || STATIC_BLOG_DATA.title,
+                        author: firebaseData.author || STATIC_BLOG_DATA.author,
+                        groom: firebaseData.groom || "",
+                        bride: firebaseData.bride || "",
+                        category: firebaseData.category || STATIC_BLOG_DATA.category,
+                        date: firebaseData.date || STATIC_BLOG_DATA.date,
+                        location: firebaseData.location || STATIC_BLOG_DATA.location,
+                        mainImage: firebaseData.mainImage || STATIC_BLOG_DATA.mainImage,
+                        intro: firebaseData.intro || STATIC_BLOG_DATA.intro,
+                        section1: firebaseData.section1 || STATIC_BLOG_DATA.section1,
+                        section2: firebaseData.section2 || STATIC_BLOG_DATA.section2,
+                        gallery: firebaseData.gallery || STATIC_BLOG_DATA.gallery
+                    });
                 } else {
+                    /* Commented out WordPress Dynamic Fetching
+                    const post = await fetchFromWP(`/posts/${id}`, { _embed: 1 });
+
+                    if (post) {
+                        const acf = getACF(post);
+                        const wpPosts = await fetchFromWP('/posts', { _fields: 'id' });
+                        setPostIds(wpPosts.map(p => p.id));
+
+                        const formattedData = {
+                            title: post.title.rendered,
+                            author: acf.author_name || STATIC_BLOG_DATA.author,
+                            category: post.categories_names?.[0] || STATIC_BLOG_DATA.category,
+                            date: acf.event_date || post.date.split('T')[0],
+                            location: acf.location || STATIC_BLOG_DATA.location,
+                            mainImage: getImageUrl(getFeaturedImage(post), STATIC_BLOG_DATA.mainImage),
+                            intro: post.excerpt.rendered.replace(/<[^>]*>?/gm, ''),
+                            section1: {
+                                title: acf.section1_title || STATIC_BLOG_DATA.section1.title,
+                                text: acf.section1_text || "",
+                                images: acf.section1_images?.map(img => getImageUrl(img, "")) || []
+                            },
+                            section2: {
+                                title: acf.section2_title || STATIC_BLOG_DATA.section2.title,
+                                text: acf.section2_text || "",
+                                images: acf.section2_images?.map(img => getImageUrl(img, "")) || []
+                            },
+                            gallery: acf.gallery_images?.map(img => ({
+                                src: getImageUrl(img.url, ""),
+                                size: img.size || "medium"
+                            })) || []
+                        };
+
+                        setBlogData(formattedData);
+                    } else {
+                        setBlogData(STATIC_BLOG_DATA);
+                    }
+                    */
                     setBlogData(STATIC_BLOG_DATA);
                 }
             } catch (error) {
-                console.error("Failed to load blog details, using static fallback:", error);
+                console.error("Failed to load blog details from Firebase, using static fallback:", error);
                 setBlogData(STATIC_BLOG_DATA);
             } finally {
                 setLoading(false);
@@ -147,6 +175,11 @@ const BlogDetails = () => {
                 <header className={styles.header}>
                     <h1 className={styles.title}>{blogData.title}</h1>
                     <div className={styles.meta}>
+                        {(blogData.groom || blogData.bride) && (
+                            <div className={styles.namesRow} style={{ marginBottom: '10px', fontSize: '1.2em', fontStyle: 'italic' }}>
+                                {blogData.groom} {blogData.groom && blogData.bride && '&'} {blogData.bride}
+                            </div>
+                        )}
                         <span className={styles.author}>{blogData.author}</span>
                         <span className={styles.category}>{blogData.category}</span>
                         <p className={styles.date}>Date: <span>{blogData.date}</span></p>
@@ -156,11 +189,11 @@ const BlogDetails = () => {
 
                 {/* Main Image */}
                 <div className={styles.mainImageWrapper}>
+                    <h2 className={styles.sectionTitle}>Introduction</h2>
                     <img src={blogData.mainImage} alt={blogData.title} className={styles.mainImage} />
+                    <p className={styles.text}>{blogData.intro}</p>
                 </div>
 
-                {/* Intro Text */}
-                <p className={styles.text}>{blogData.intro}</p>
 
                 {/* Section 1 */}
                 {blogData.section1.text && (

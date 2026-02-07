@@ -116,7 +116,7 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .hero {
-    height: 90vh;
+    height: 100vh;
   }
 
   .badge {
@@ -151,10 +151,6 @@
     font-weight: 500;
     font-size: 16px;
     max-width: 150px;
-  }
-
-  .marqueeWrapper {
-    bottom: 10px;
   }
 
   .marqueeContent span {

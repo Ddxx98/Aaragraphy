@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./AboutPhotographer.module.css";
 import { fetchFromWP, getACF } from "../../utils/wpApi";
+import { getFromDB } from "../../utils/fbApi";
 
 const STATIC_DATA = {
     heroTitle: (
@@ -32,21 +33,37 @@ const AboutPhotographer = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const pages = await fetchFromWP('/pages', { slug: 'home' });
-                if (pages && pages.length > 0) {
-                    const acf = getACF(pages[0]);
+                // Firebase Fetching
+                const firebaseData = await getFromDB('about_photographer');
+                if (firebaseData) {
                     setData({
-                        heroTitle: acf.about_hero_title ? (
-                            <div dangerouslySetInnerHTML={{ __html: acf.about_hero_title }} />
+                        heroTitle: firebaseData.heroTitle ? (
+                            <div dangerouslySetInnerHTML={{ __html: firebaseData.heroTitle }} />
                         ) : STATIC_DATA.heroTitle,
-                        heroMobileTitle: acf.about_hero_mobile_title ? (
-                            <div dangerouslySetInnerHTML={{ __html: acf.about_hero_mobile_title }} />
+                        heroMobileTitle: firebaseData.heroMobileTitle ? (
+                            <div dangerouslySetInnerHTML={{ __html: firebaseData.heroMobileTitle }} />
                         ) : STATIC_DATA.heroMobileTitle,
-                        testimonialText: acf.about_testimonial_text || STATIC_DATA.testimonialText
+                        testimonialText: firebaseData.testimonialText || STATIC_DATA.testimonialText
                     });
+                } else {
+                    /* Commented out WordPress Dynamic Fetching
+                    const pages = await fetchFromWP('/pages', { slug: 'home' });
+                    if (pages && pages.length > 0) {
+                        const acf = getACF(pages[0]);
+                        setData({
+                            heroTitle: acf.about_hero_title ? (
+                                <div dangerouslySetInnerHTML={{ __html: acf.about_hero_title }} />
+                            ) : STATIC_DATA.heroTitle,
+                            heroMobileTitle: acf.about_hero_mobile_title ? (
+                                <div dangerouslySetInnerHTML={{ __html: acf.about_hero_mobile_title }} />
+                            ) : STATIC_DATA.heroMobileTitle,
+                            testimonialText: acf.about_testimonial_text || STATIC_DATA.testimonialText
+                        });
+                    }
+                    */
                 }
             } catch (error) {
-                console.error("Failed to load dynamic about photographer data:", error);
+                console.error("Failed to load dynamic about photographer data from Firebase:", error);
             } finally {
                 setLoading(false);
             }

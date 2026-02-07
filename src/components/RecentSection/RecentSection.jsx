@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./RecentSection.module.css";
 import coupleFallback from "../../assets/couple.jpg";
+import { fetchFromWP, getImageUrl, getACF, getFeaturedImage } from "../../utils/wpApi";
+import { getFromDB } from "../../utils/fbApi";
 
 const STATIC_ITEMS = [
   {
@@ -30,28 +32,45 @@ const RecentSection = () => {
   useEffect(() => {
     const loadRecentPosts = async () => {
       try {
-        // Fetch latest 2 posts with embedded media and ACF fields
-        const data = await fetchFromWP('/posts', {
-          per_page: 2,
-          _embed: 1
-        });
-
-        if (data && data.length > 0) {
-          const formattedItems = data.map(post => {
-            const acf = getACF(post);
-            return {
-              id: post.id,
-              title: post.title.rendered,
-              groom: acf.groom_name || "Groom",
-              bride: acf.bride_name || "Bride",
-              date: acf.event_date || post.date.split('T')[0],
-              image: getImageUrl(getFeaturedImage(post), STATIC_ITEMS[0].image)
-            };
-          });
-          setItems(formattedItems);
+        // Firebase Fetching
+        const firebaseData = await getFromDB('recent_work');
+        if (firebaseData && Array.isArray(firebaseData)) {
+          setItems(firebaseData);
+        } else {
+          /* Commented out WordPress Dynamic Fetching
+          const categories = await fetchFromWP('/categories', { slug: 'recent-section' });
+  
+          let params = {
+            per_page: 2,
+            _embed: 1
+          };
+  
+          if (categories && categories.length > 0) {
+            params.categories = categories[0].id;
+          }
+  
+          const data = await fetchFromWP('/posts', params);
+  
+          if (data && data.length > 0) {
+            const formattedItems = data.map(post => {
+              const acf = getACF(post);
+              return {
+                id: post.id,
+                title: post.title.rendered,
+                groom: acf.groom_name || "Groom",
+                bride: acf.bride_name || "Bride",
+                date: acf.event_date || post.date.split('T')[0],
+                image: getImageUrl(getFeaturedImage(post), STATIC_ITEMS[0].image)
+              };
+            });
+            setItems(formattedItems);
+          }
+          */
+          setItems(STATIC_ITEMS);
         }
       } catch (error) {
-        console.error("Failed to load recent posts:", error);
+        console.error("Failed to load recent posts from Firebase:", error);
+        setItems(STATIC_ITEMS);
       } finally {
         setLoading(false);
       }

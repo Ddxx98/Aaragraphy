@@ -79,8 +79,17 @@ const ServicePackage = ({ onSelectPackage, onPackagesLoaded }) => {
                         setPackages(firebaseData.packages);
                         if (onPackagesLoaded) onPackagesLoaded(firebaseData.packages.map(p => p.title));
                     }
-                    if (firebaseData.addons) setAddons(firebaseData.addons);
-                    if (firebaseData.notes) setNotes(firebaseData.notes);
+                    if (firebaseData.addons && firebaseData.addons.some(a => a.trim() !== "")) {
+                        setAddons(firebaseData.addons);
+                    } else {
+                        setAddons(STATIC_ADDONS);
+                    }
+
+                    if (firebaseData.notes && firebaseData.notes.trim() !== "") {
+                        setNotes(firebaseData.notes);
+                    } else {
+                        setNotes("Location outside Dublin, Meath, Kildare & Wicklow will include travel charge based on the location.");
+                    }
                 } else if (onPackagesLoaded) {
                     onPackagesLoaded(STATIC_PACKAGES.map(p => p.title));
                 }

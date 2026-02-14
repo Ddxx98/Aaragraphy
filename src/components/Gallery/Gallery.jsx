@@ -13,7 +13,7 @@ import fallbackImg7 from "../../assets/wedding_ceremony.png";
 import fallbackImg8 from "../../assets/bride_portrait.png";
 import fallbackImg9 from "../../assets/rings_detail.png";
 
-const Gallery = ({ viewAll }) => {
+const Gallery = ({ viewAll, limited }) => {
     const navigate = useNavigate();
     const [galleryImages, setGalleryImages] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -78,13 +78,16 @@ const Gallery = ({ viewAll }) => {
         return <div style={{ padding: '60px', textAlign: 'center' }}>Loading gallery...</div>;
     }
 
+    // Determine which images to display
+    const displayedImages = limited ? galleryImages.slice(0, 9) : galleryImages;
+
     return (
         <section className={styles.section}>
             <p className={styles.subTitle}>Want to see some more magic?</p>
             <h2 className={styles.title}>Our Gallery</h2>
 
             <div className={styles.grid}>
-                {galleryImages.map((image, index) => (
+                {displayedImages.map((image, index) => (
                     <div key={image.id || index} className={styles.imageWrapper}>
                         <img
                             src={image.src}

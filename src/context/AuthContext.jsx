@@ -3,7 +3,9 @@ import { auth } from "../firebase";
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
-    signOut
+    signOut,
+    setPersistence,
+    browserSessionPersistence
 } from "firebase/auth";
 
 const AuthContext = createContext();
@@ -22,7 +24,8 @@ export const AuthProvider = ({ children }) => {
         return unsubscribe;
     }, []);
 
-    const login = (email, password) => {
+    const login = async (email, password) => {
+        await setPersistence(auth, browserSessionPersistence);
         return signInWithEmailAndPassword(auth, email, password);
     };
 

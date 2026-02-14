@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Blog from '../../components/Blog/Blog';
 import Gallery from '../../components/Gallery/Gallery';
 import ReviewSection from '../../components/ReviewSection/ReviewSection';
+import { getFromDB } from '../../utils/fbApi';
 import blogFallback from "../../assets/couple.jpg";
 
 const STATIC_POSTS = [
@@ -28,6 +29,7 @@ const STATIC_POSTS = [
 const Blogs = () => {
     const [blogPosts, setBlogPosts] = useState(STATIC_POSTS);
     const [loading, setLoading] = useState(true);
+    const [activeView, setActiveView] = useState("Blog");
 
     useEffect(() => {
         const loadPosts = async () => {
@@ -35,9 +37,13 @@ const Blogs = () => {
                 // Firebase Fetching
                 const firebaseData = await getFromDB('posts');
                 if (firebaseData) {
-                    const postsArray = Array.isArray(firebaseData)
+                    const postsArray = (Array.isArray(firebaseData)
                         ? firebaseData
-                        : Object.entries(firebaseData).map(([id, val]) => ({ id, ...val }));
+                        : Object.entries(firebaseData).map(([id, val]) => ({ id, ...val }))
+                    ).map(post => ({
+                        ...post,
+                        image: post.mainImage || post.image || blogFallback
+                    }));
                     setBlogPosts(postsArray);
                 } else {
                     setBlogPosts(STATIC_POSTS);
@@ -59,9 +65,15 @@ const Blogs = () => {
 
     return (
         <div>
-            <Blog posts={blogPosts} />
-            <Gallery viewAll={false} />
-            <ReviewSection />
+            <Blog
+                posts={blogPosts}
+                activeView={activeView}
+                setActiveView={setActiveView}
+            />
+            {activeView === "Gallery" && (
+                <Gallery viewAll={false} limited={false} />
+            )}
+            <ReviewSection limited={false} />
         </div>
     );
 };

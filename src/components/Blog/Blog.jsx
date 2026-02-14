@@ -3,12 +3,16 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Blog.module.css";
 import ArrowDropdown from "../../assets/arrow_drop_down.svg";
 
-const Blog = ({ posts = [] }) => {
+const Blog = ({ posts = [], activeView, setActiveView }) => {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All");
-  const [activeView, setActiveView] = useState("Blog");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
+
+  // Local state for view if not provided (fallback)
+  const [localActiveView, setLocalActiveView] = useState("Blog");
+  const view = activeView || localActiveView;
+  const setView = setActiveView || setLocalActiveView;
 
   const categories = ["All", "Wedding", "Corporate", "Travel", "Baby Shower"];
   const views = ["Blog", "Gallery"];
@@ -37,8 +41,8 @@ const Blog = ({ posts = [] }) => {
     setIsCategoryOpen(false);
   };
 
-  const selectView = (view) => {
-    setActiveView(view);
+  const selectView = (v) => {
+    setView(v);
     setIsViewOpen(false);
   };
 
@@ -90,14 +94,14 @@ const Blog = ({ posts = [] }) => {
 
         {/* Desktop Views */}
         <div className={styles.desktopViews}>
-          {views.map((view) => (
+          {views.map((v) => (
             <button
-              key={view}
-              className={`${styles.filterButton} ${activeView === view ? styles.activeFilter : ""
+              key={v}
+              className={`${styles.filterButton} ${view === v ? styles.activeFilter : ""
                 }`}
-              onClick={() => setActiveView(view)}
+              onClick={() => setView(v)}
             >
-              {view}
+              {v}
             </button>
           ))}
         </div>
@@ -108,18 +112,18 @@ const Blog = ({ posts = [] }) => {
             className={styles.dropdownTrigger}
             onClick={toggleViewDropdown}
           >
-            {activeView} <img src={ArrowDropdown} alt="Dropdown Arrow" className={styles.arrow} />
+            {view} <img src={ArrowDropdown} alt="Dropdown Arrow" className={styles.arrow} />
           </button>
           {isViewOpen && (
             <div className={styles.dropdownMenu}>
-              <div className={styles.dropdownHeader}>{activeView}</div>
-              {views.map((view) => (
+              <div className={styles.dropdownHeader}>{view}</div>
+              {views.map((v) => (
                 <button
-                  key={view}
+                  key={v}
                   className={styles.dropdownItem}
-                  onClick={() => selectView(view)}
+                  onClick={() => selectView(v)}
                 >
-                  {view}
+                  {v}
                 </button>
               ))}
             </div>
@@ -127,43 +131,45 @@ const Blog = ({ posts = [] }) => {
         </div>
       </div>
 
-      <div className={styles.grid}>
-        {filteredPosts.map((post) => (
-          <article
-            key={post.id}
-            className={styles.card}
-            onClick={() => handleBlogClick(post.id)}
-            onKeyDown={(e) => handleKeyDown(e, post.id)}
-            role="button"
-            tabIndex={0}
-            aria-label={`Read ${post.title}`}
-          >
-            <div className={styles.imageWrapper}>
-              <img
-                src={post.image}
-                alt={post.title}
-                className={styles.image}
-              />
-            </div>
-
-            <div className={styles.cardBody}>
-              <div className={styles.cardTitleRow}>
-                <h3 className={styles.cardTitle}>{post.title}</h3>
-                <span className={styles.arrow}>&rarr;</span>
+      {view === "Blog" && (
+        <div className={styles.grid}>
+          {filteredPosts.map((post) => (
+            <article
+              key={post.id}
+              className={styles.card}
+              onClick={() => handleBlogClick(post.id)}
+              onKeyDown={(e) => handleKeyDown(e, post.id)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Read ${post.title}`}
+            >
+              <div className={styles.imageWrapper}>
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  className={styles.image}
+                />
               </div>
 
-              <p className={styles.names}>
-                {post.groom} <span className={styles.weds}>&</span> {post.bride}
-              </p>
+              <div className={styles.cardBody}>
+                <div className={styles.cardTitleRow}>
+                  <h3 className={styles.cardTitle}>{post.title}</h3>
+                  <span className={styles.arrow}>&rarr;</span>
+                </div>
 
-              <p className={styles.dateRow}>
-                <span className={styles.dateLabel}>Date:</span>{" "}
-                <span className={styles.dateValue}>{post.date}</span>
-              </p>
-            </div>
-          </article>
-        ))}
-      </div>
+                <p className={styles.names}>
+                  {post.groom} <span className={styles.weds}>&</span> {post.bride}
+                </p>
+
+                <p className={styles.dateRow}>
+                  <span className={styles.dateLabel}>Date:</span>{" "}
+                  <span className={styles.dateValue}>{post.date}</span>
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 };

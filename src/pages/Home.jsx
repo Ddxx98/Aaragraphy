@@ -19,10 +19,10 @@ const Home = () => {
                 <RecentSection />
             </div>
             <div id="reviews">
-                <ReviewSection />
+                <ReviewSection limited={true} />
             </div>
             <div id="gallery">
-                <Gallery viewAll={true} />
+                <Gallery viewAll={true} limited={true} />
             </div>
             <div id="about">
                 <Section />

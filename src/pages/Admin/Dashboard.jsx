@@ -27,8 +27,32 @@ const Dashboard = () => {
             navigate('/admin/login');
         } else {
             loadData();
+            // Start inactivity timer when user is logged in
+            resetInactivityTimer();
         }
+
+        // Setup event listeners for user activity
+        const activities = ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll'];
+        activities.forEach(event => window.addEventListener(event, resetInactivityTimer));
+
+        return () => {
+            if (inactivityTimeout) clearTimeout(inactivityTimeout);
+            activities.forEach(event => window.removeEventListener(event, resetInactivityTimer));
+        };
     }, [user, navigate]);
+
+    let inactivityTimeout;
+    const resetInactivityTimer = () => {
+        if (inactivityTimeout) clearTimeout(inactivityTimeout);
+
+        // 30 minutes in milliseconds (30 * 60 * 1000)
+        const TIMEOUT_DURATION = 30 * 60 * 1000;
+
+        inactivityTimeout = setTimeout(() => {
+            console.log("Inactivity timeout reached. Logging out...");
+            handleLogout();
+        }, TIMEOUT_DURATION);
+    };
 
     const loadData = async () => {
         setLoading(true);
@@ -54,6 +78,10 @@ const Dashboard = () => {
             if (typeof obj === 'object') {
                 return Object.keys(obj).every(key => {
                     if (key.endsWith('_id')) return true;
+                    // Make 'addons' and 'notes' optional for services
+                    if (path === 'services' && (key === 'addons' || key === 'notes')) return true;
+                    // Make specific blog post fields optional
+                    if (path === 'posts' && (key === 'groom' || key === 'bride' || key === 'location' || key === 'section1' || key === 'section2')) return true;
                     return validate(obj[key]);
                 });
             }
@@ -82,9 +110,12 @@ const Dashboard = () => {
     const handleLogout = async () => {
         try {
             await logout();
+            // Clear cache/storage
+            localStorage.clear();
+            sessionStorage.clear();
             navigate('/');
         } catch (error) {
-            console.error(error);
+            console.error("Logout error:", error);
         }
     };
 
@@ -269,8 +300,11 @@ const ListEditor = ({ label, initialData, onSave, isSaving }) => {
     const [items, setItems] = useState(Array.isArray(initialData) ? initialData : []);
 
     useEffect(() => {
-        if (Array.isArray(initialData)) {
-            setItems(initialData);
+        if (initialData) {
+            const normalized = Array.isArray(initialData)
+                ? initialData
+                : Object.entries(initialData).map(([id, val]) => ({ ...val, id: val.id || id }));
+            setItems(normalized);
         }
     }, [initialData]);
 
@@ -329,6 +363,20 @@ const ListEditor = ({ label, initialData, onSave, isSaving }) => {
 
     return (
         <div>
+            {label === 'gallery' && (
+                <div style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#eef2ff',
+                    border: '1px solid #c7d2fe',
+                    borderRadius: '6px',
+                    marginBottom: '20px',
+                    color: '#3730a3',
+                    fontSize: '13px',
+                    fontWeight: '500'
+                }}>
+                    💡 <strong>Tip:</strong> For the best visual layout, please upload images in <strong>multiples of 3</strong> (e.g., 3, 6, 9, 12 images). This ensures the 3-column grid stays perfectly balanced.
+                </div>
+            )}
             {items?.map((item, idx) => (
                 <div key={idx} style={styles.itemCard}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
@@ -446,7 +494,7 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
     };
 
     const updateAddons = (val) => {
-        const addons = val.split('\n').filter(line => line.trim() !== "");
+        const addons = val.split('\n');
         setFormData(prev => ({ ...prev, addons }));
     };
 
@@ -494,7 +542,7 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
             ))}
             <button onClick={addPackage} style={{ ...styles.addBtn, marginBottom: '30px' }}>+ Add New Package</button>
 
-            <h3 style={styles.sectionHeading}>Addons (One per line) <span style={{ color: '#dc2626' }}>*</span></h3>
+            <h3 style={styles.sectionHeading}>Addons (One per line)</h3>
             <textarea
                 style={{ ...styles.adminTextarea, minHeight: '120px' }}
                 value={formData.addons?.join('\n')}
@@ -502,7 +550,7 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
                 placeholder="Addon 1&#10;Addon 2..."
             />
 
-            <h3 style={styles.sectionHeading}>Note <span style={{ color: '#dc2626' }}>*</span></h3>
+            <h3 style={styles.sectionHeading}>Note</h3>
             <textarea style={styles.adminTextarea} value={formData?.notes || ""} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))} />
 
             <div style={{ marginTop: '30px' }}>
@@ -608,7 +656,7 @@ const AboutEditor = ({ initialData, onSave, isSaving }) => {
             <textarea style={styles.adminTextarea} value={formData?.whyPhotography || ""} onChange={(e) => setFormData(prev => ({ ...prev, whyPhotography: e.target.value }))} />
             <label style={styles.label}>Values <span style={{ color: '#dc2626' }}>*</span></label>
             <textarea style={styles.adminTextarea} value={formData?.values || ""} onChange={(e) => setFormData(prev => ({ ...prev, values: e.target.value }))} />
-            <button onClick={() => onSave(formData)} disabled={isSaving} style={styles.saveBtn}>SAVE ABOUT</button>
+            <button onClick={() => onSave(formData, true)} disabled={isSaving} style={styles.saveBtn}>SAVE ABOUT</button>
         </div>
     );
 };
@@ -618,8 +666,11 @@ const BlogManager = ({ initialData, onSaveAll, isSaving }) => {
     const [editingPost, setEditingPost] = useState(null);
 
     useEffect(() => {
-        if (Array.isArray(initialData)) {
-            setPosts(initialData);
+        if (initialData) {
+            const normalized = Array.isArray(initialData)
+                ? initialData
+                : Object.entries(initialData).map(([id, val]) => ({ ...val, id: val.id || id }));
+            setPosts(normalized);
         }
     }, [initialData]);
 
@@ -697,8 +748,6 @@ const BlogManager = ({ initialData, onSaveAll, isSaving }) => {
 const BlogPostEditor = ({ post, onSave, isSaving }) => {
     const [formData, setFormData] = useState({
         ...post,
-        reviewText: post.reviewText || "",
-        reviewAuthor: post.reviewAuthor || "",
         section1: post.section1 || { title: "The Beginning", text: "", images: [] },
         section2: post.section2 || { title: "The Ceremony", text: "", images: [] },
         gallery: post.gallery || []
@@ -806,21 +855,6 @@ const BlogPostEditor = ({ post, onSave, isSaving }) => {
                     placeholder="Short intro about the story..."
                 />
 
-                <h3 style={{ marginTop: '20px' }}>Review Blurb (For Home Page)</h3>
-                <label style={styles.label}>Review Quote</label>
-                <textarea
-                    style={{ ...styles.adminTextarea, minHeight: '80px' }}
-                    value={formData.reviewText}
-                    onChange={(e) => handleChange('reviewText', e.target.value)}
-                    placeholder="E.g. 'A good photographer, who actually made our time special...'"
-                />
-                <label style={styles.label}>Author Line</label>
-                <input
-                    style={styles.adminInput}
-                    value={formData.reviewAuthor}
-                    onChange={(e) => handleChange('reviewAuthor', e.target.value)}
-                    placeholder="E.g. 'Happy Client'"
-                />
             </div>
 
             <div style={styles.itemCard}>

@@ -50,34 +50,40 @@ const BlogDetails = () => {
         const loadPostData = async () => {
             setLoading(true);
             try {
-                // Firebase Fetching
-                const firebaseData = await getFromDB(`posts/${id}`);
+                // Fetch all posts to find the specific one and handle navigation IDs
                 const allPosts = await getFromDB('posts');
 
                 if (allPosts) {
-                    const ids = Array.isArray(allPosts)
-                        ? allPosts.map(p => p.id)
-                        : Object.keys(allPosts).map(String);
-                    setPostIds(ids.map(Number).filter(n => !isNaN(n)));
-                }
+                    const postsArray = Array.isArray(allPosts)
+                        ? allPosts
+                        : Object.entries(allPosts).map(([fid, val]) => ({ ...val, id: fid }));
 
-                if (firebaseData) {
-                    setBlogData({
-                        title: firebaseData?.title || STATIC_BLOG_DATA.title,
-                        author: firebaseData?.author || STATIC_BLOG_DATA.author,
-                        groom: firebaseData?.groom || STATIC_BLOG_DATA.groom,
-                        bride: firebaseData?.bride || STATIC_BLOG_DATA.bride,
-                        category: firebaseData?.category || STATIC_BLOG_DATA.category,
-                        date: firebaseData?.date || STATIC_BLOG_DATA.date,
-                        location: firebaseData?.location || STATIC_BLOG_DATA.location,
-                        mainImage: firebaseData?.mainImage || STATIC_BLOG_DATA.mainImage,
-                        intro: firebaseData?.intro || STATIC_BLOG_DATA.intro,
-                        section1: firebaseData?.section1 || STATIC_BLOG_DATA.section1,
-                        section2: firebaseData?.section2 || STATIC_BLOG_DATA.section2,
-                        gallery: firebaseData?.gallery || STATIC_BLOG_DATA.gallery
-                    });
+                    // Update all post IDs for navigation logic
+                    const ids = postsArray.map(p => p.id);
+                    setPostIds(ids);
+
+                    // Find the specific post by ID
+                    const foundPost = postsArray.find(p => String(p.id) === String(id));
+
+                    if (foundPost) {
+                        setBlogData({
+                            title: foundPost?.title || STATIC_BLOG_DATA.title,
+                            author: foundPost?.author || STATIC_BLOG_DATA.author,
+                            groom: foundPost?.groom || STATIC_BLOG_DATA.groom,
+                            bride: foundPost?.bride || STATIC_BLOG_DATA.bride,
+                            category: foundPost?.category || STATIC_BLOG_DATA.category,
+                            date: foundPost?.date || STATIC_BLOG_DATA.date,
+                            location: foundPost?.location || STATIC_BLOG_DATA.location,
+                            mainImage: foundPost?.mainImage || STATIC_BLOG_DATA.mainImage,
+                            intro: foundPost?.intro || STATIC_BLOG_DATA.intro,
+                            section1: foundPost?.section1 || STATIC_BLOG_DATA.section1,
+                            section2: foundPost?.section2 || STATIC_BLOG_DATA.section2,
+                            gallery: foundPost?.gallery || STATIC_BLOG_DATA.gallery
+                        });
+                    } else {
+                        setBlogData(STATIC_BLOG_DATA);
+                    }
                 } else {
-                    // Fail gracefully to static data if not found in DB
                     setBlogData(STATIC_BLOG_DATA);
                 }
             } catch (error) {
@@ -91,8 +97,8 @@ const BlogDetails = () => {
         loadPostData();
     }, [id]);
 
-    // Navigation logic
-    const currentIndex = postIds.indexOf(Number(id));
+    // Navigation logic - use String comparison for safety
+    const currentIndex = postIds.findIndex(pid => String(pid) === String(id));
     const prevId = currentIndex > 0 ? postIds[currentIndex - 1] : null;
     const nextId = currentIndex < postIds.length - 1 ? postIds[currentIndex + 1] : null;
 

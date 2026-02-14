@@ -286,7 +286,13 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                 <div className={styles.Emailcard}>
                     <div className={styles.emailInfo}>
                         <h3>Have something urgent?</h3>
-                        <p className={styles.emailAddress}>Emailemail@Email.com</p>
+                        <a
+                            href="mailto:aaragraphy@gmail.com"
+                            className={styles.emailAddress}
+                            aria-label="Send an email to aaragraphy@gmail.com"
+                        >
+                            aaragraphy@gmail.com
+                        </a>
                     </div>
                 </div>
             </div>

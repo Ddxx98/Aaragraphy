@@ -89,6 +89,7 @@
     position: relative;
     padding-left: 15px;
     color: #55584B;
+    white-space: pre-wrap;
 }
 
 .deliverablesList li::before {
@@ -137,6 +138,7 @@
     color: #555;
     padding-left: 15px;
     position: relative;
+    white-space: pre-wrap;
 }
 
 .addonsList li::before {
@@ -165,6 +167,7 @@
 
 .noteText {
     margin-bottom: 24px;
+    white-space: pre-wrap;
 }
 
 .greetingText {

@@ -25,22 +25,20 @@
     background-color: white;
     width: 90%;
     margin: 0 auto;
-    min-height: 1100px;
     position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 /* Form Card Specific Styles */
 .Formcard {
-    position: absolute;
-    top: -80px;
-    /* Overlap the cream background */
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    margin-top: -120px;
+    /* Overlap the cream background significantly */
     width: 500px;
     background-color: #FCFBF8;
-    border-radius: 16px 16px 0 0;
-    box-shadow: 0px 0px 8px 1px #00000014;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     z-index: 10;
 }
@@ -237,6 +235,15 @@
     font-size: 80px;
     color: var(--green-dropdown);
     font-style: italic;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.emailAddress:hover {
+    color: var(--green-active);
+    opacity: 0.8;
+    transform: translateY(-2px);
 }
 
 /* Mobile */
@@ -253,28 +260,23 @@
 
     .OverlayCard {
         width: 93%;
-        min-height: 50vh;
-        /* Remove fixed height */
+        margin: -90px auto 0;
+        /* Shift the entire container up on mobile */
         position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-top: 40px;
-
+        padding-top: 0;
     }
 
     .Formcard {
         position: relative;
-        /* Switch to relative for dynamic height */
-        top: -90px;
-        /* Negative top to overlap the cream background */
         width: 90%;
         max-width: 500px;
         left: auto;
         transform: none;
         margin: 0 auto;
         box-shadow: 0px 0px 8px 1px #00000014;
-        bottom: 0px;
     }
 
     .Emailcard {

@@ -148,8 +148,8 @@
         font-weight: 500;
     }
 
-    /* hide the second card on mobile */
-    .card:nth-child(2) {
+    /* hide the second card on mobile only if limited */
+    .limited .card:nth-child(2) {
         display: none;
     }
 }

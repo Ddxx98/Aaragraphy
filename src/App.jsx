@@ -8,6 +8,7 @@ import AboutUs from './pages/AboutUs/AboutUs';
 import ContactUs from './pages/ContactUs/ContactUs';
 import Login from './pages/Admin/Login';
 import Dashboard from './pages/Admin/Dashboard';
+import Faq from './pages/Faq/Faq';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="blog" element={<Blog />} />
             <Route path="blog/:id" element={<BlogDetails />} />
             <Route path="about" element={<AboutUs />} />
+            <Route path="faq" element={<Faq />} />
             <Route path="contact" element={<ContactUs />} />
           </Route>
 

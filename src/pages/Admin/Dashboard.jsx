@@ -123,8 +123,11 @@ const Dashboard = () => {
 
     const navItems = [
         { id: 'services', label: 'Service Packages' },
+        { id: 'serviceList', label: 'Service Items' },
         { id: 'hero', label: 'Hero Content' },
         { id: 'about', label: 'About Us' },
+        { id: 'about_photographer', label: 'Photographer Bio' },
+        { id: 'faq', label: 'FAQs' },
         { id: 'gallery', label: 'Gallery' },
         { id: 'posts', label: 'Blog Posts' },
         { id: 'reviews', label: 'Reviews' }
@@ -135,7 +138,7 @@ const Dashboard = () => {
             {/* Mobile Header */}
             {isMobile && (
                 <header style={styles.mobileHeader}>
-                    <h1 style={styles.mobileLogo}>Aarography</h1>
+                    <h1 style={styles.mobileLogo}>Aaragraphy</h1>
                     <button onClick={() => setSidebarOpen(!sidebarOpen)} style={styles.menuBtn}>
                         {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
@@ -153,7 +156,7 @@ const Dashboard = () => {
                 height: isMobile ? 'calc(100vh - 60px)' : '100vh',
                 zIndex: 1000
             }}>
-                <h1 style={isMobile ? { display: 'none' } : styles.logo}>Aarography CMS</h1>
+                <h1 style={isMobile ? { display: 'none' } : styles.logo}>Aaragraphy CMS</h1>
                 <nav style={styles.nav}>
                     {navItems.map(item => (
                         <button
@@ -179,8 +182,9 @@ const Dashboard = () => {
             {/* Main Content */}
             <main style={{
                 ...styles.content,
-                padding: isMobile ? '20px' : '40px',
-                marginTop: isMobile ? '60px' : '0'
+                padding: isMobile ? '0 20px 20px' : '0 40px 40px',
+                marginTop: isMobile ? '60px' : '0',
+                paddingTop: isMobile ? '20px' : '0'
             }}>
                 <header style={{ ...styles.header, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '10px' : '0' }}>
                     <h2 style={{ fontSize: isMobile ? '20px' : '24px' }}>{navItems.find(i => i.id === activeTab)?.label} Editor</h2>
@@ -198,10 +202,20 @@ const Dashboard = () => {
                             isSaving={saving}
                         />
                     )}
+                    {activeTab === 'serviceList' && (
+                        <ListEditor
+                            label="serviceList"
+                            initialData={data?.serviceList || []}
+                            onSave={(val, bypass) => handleSave('serviceList', val, bypass)}
+                            isSaving={saving}
+                        />
+                    )}
                     {activeTab === 'hero' && (
-                        <HeroEditor
-                            initialData={data?.hero}
-                            onSave={(val, bypass) => handleSave('hero', val, bypass)}
+                        <HeroManager
+                            initialHero={data?.hero}
+                            initialCapturedHero={data?.captured_hero}
+                            onSaveHero={(val, bypass) => handleSave('hero', val, bypass)}
+                            onSaveCapturedHero={(val, bypass) => handleSave('captured_hero', val, bypass)}
                             isSaving={saving}
                         />
                     )}
@@ -209,6 +223,21 @@ const Dashboard = () => {
                         <AboutEditor
                             initialData={data?.about}
                             onSave={(val, bypass) => handleSave('about', val, bypass)}
+                            isSaving={saving}
+                        />
+                    )}
+                    {activeTab === 'about_photographer' && (
+                        <PhotographerEditor
+                            initialData={data?.about_photographer}
+                            onSave={(val, bypass) => handleSave('about_photographer', val, bypass)}
+                            isSaving={saving}
+                        />
+                    )}
+                    {activeTab === 'faq' && (
+                        <ListEditor
+                            label="faq"
+                            initialData={data?.faq || []}
+                            onSave={(val, bypass) => handleSave('faq', val, bypass)}
                             isSaving={saving}
                         />
                     )}
@@ -313,7 +342,11 @@ const ListEditor = ({ label, initialData, onSave, isSaving }) => {
             ? { id: Date.now(), text: "", authorLine: "", groom: "", bride: "", date: "", image: "" }
             : label === 'posts'
                 ? { id: Date.now(), title: "", groom: "", bride: "", location: "", intro: "", author: "", category: "", date: "", mainImage: "" }
-                : { id: Date.now(), src: "", alt: "" };
+                : label === 'serviceList'
+                    ? { id: Date.now(), service_id: "", label: "", image: "", description: "" }
+                    : label === 'faq'
+                        ? { id: Date.now(), question: "", answer: "" }
+                        : { id: Date.now(), src: "", alt: "" };
         setItems(prev => [...prev, newItem]);
     };
 
@@ -414,9 +447,9 @@ const ListEditor = ({ label, initialData, onSave, isSaving }) => {
                                             placeholder="URL will appear here after upload"
                                         />
                                     </>
-                                ) : key === 'text' || key === 'intro' ? (
+                                ) : (key === 'text' || key === 'intro' || key === 'answer' || key === 'description') ? (
                                     <textarea
-                                        style={styles.adminTextarea}
+                                        style={{ ...styles.adminTextarea, minHeight: key === 'answer' || key === 'description' ? '100px' : '60px' }}
                                         value={item[key]}
                                         onChange={(e) => updateItem(idx, key, e.target.value)}
                                     />
@@ -562,7 +595,32 @@ const ServiceEditor = ({ initialData, onSave, isSaving }) => {
     );
 };
 
-const HeroEditor = ({ initialData, onSave, isSaving }) => {
+const HeroManager = ({ initialHero, initialCapturedHero, onSaveHero, onSaveCapturedHero, isSaving }) => {
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+            <div style={styles.itemCard}>
+                <h3 style={styles.sectionHeading}>Homepage Hero</h3>
+                <HeroSubEditor
+                    initialData={initialHero}
+                    onSave={onSaveHero}
+                    isSaving={isSaving}
+                    label="hero"
+                />
+            </div>
+            <div style={styles.itemCard}>
+                <h3 style={styles.sectionHeading}>Interior Pages Hero (Captured Title)</h3>
+                <HeroSubEditor
+                    initialData={initialCapturedHero}
+                    onSave={onSaveCapturedHero}
+                    isSaving={isSaving}
+                    label="captured_hero"
+                />
+            </div>
+        </div>
+    );
+};
+
+const HeroSubEditor = ({ initialData, onSave, isSaving, label }) => {
     const [formData, setFormData] = useState(initialData || { image: "" });
 
     useEffect(() => {
@@ -570,12 +628,13 @@ const HeroEditor = ({ initialData, onSave, isSaving }) => {
             setFormData(initialData);
         }
     }, [initialData]);
+
     return (
-        <div style={styles.itemCard}>
+        <div>
             <label style={styles.label}>Background Image <span style={{ color: '#dc2626' }}>*</span></label>
             <ImageUploader
                 currentUrl={formData?.image}
-                label="hero"
+                label={label}
                 onUpload={async (res) => {
                     if (formData.image_id) {
                         try { await deleteFromWP(formData.image_id); } catch (e) { }
@@ -593,7 +652,7 @@ const HeroEditor = ({ initialData, onSave, isSaving }) => {
                     try {
                         await onSave(updated, true); // Bypass validation for image removal
                     } catch (err) {
-                        console.error("Hero removal save failed:", err);
+                        console.error(`${label} removal save failed:`, err);
                     }
                 }}
             />
@@ -603,7 +662,13 @@ const HeroEditor = ({ initialData, onSave, isSaving }) => {
                 onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
                 placeholder="Image URL"
             />
-            <button onClick={() => onSave(formData)} disabled={isSaving} style={styles.saveBtn}>SAVE HERO</button>
+            <button
+                onClick={() => onSave(formData)}
+                disabled={isSaving}
+                style={{ ...styles.saveBtn, marginTop: '10px' }}
+            >
+                SAVE {label.toUpperCase().replace('_', ' ')}
+            </button>
         </div>
     );
 };
@@ -976,8 +1041,8 @@ const styles = {
     activeNavLink: { display: 'block', width: '100%', padding: '10px 15px', textAlign: 'left', background: '#397249', border: 'none', color: 'white', fontSize: '14px', cursor: 'pointer', borderRadius: '6px', marginBottom: '5px', fontWeight: '600' },
     sidebarFooter: { paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)' },
     logoutBtn: { width: '100%', padding: '10px', background: 'none', border: '1px solid #EAEAD4', color: '#EAEAD4', borderRadius: '4px', cursor: 'pointer', fontSize: '13px' },
-    content: { flex: 1, backgroundColor: '#F2F1E4', padding: '40px', overflowY: 'auto' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', borderBottom: '1px solid #ddd', paddingBottom: '20px' },
+    content: { flex: 1, backgroundColor: '#F2F1E4', padding: '0 40px 40px', overflowY: 'auto' },
+    header: { position: 'sticky', top: 0, backgroundColor: '#F2F1E4', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '40px 0 20px', marginBottom: '40px', borderBottom: '1px solid #ddd' },
     statusMsg: { fontSize: '12px', color: '#397249', fontWeight: '600', marginTop: '5px' },
     loading: { height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', color: '#325735' },
     editorArea: { backgroundColor: 'white', padding: '30px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', minHeight: '400px' },
@@ -1004,6 +1069,79 @@ const styles = {
     },
     mobileLogo: { fontFamily: 'Instrument Serif, serif', fontSize: '20px', color: 'white' },
     menuBtn: { background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' }
+};
+
+const PhotographerEditor = ({ initialData, onSave, isSaving }) => {
+    const [formData, setFormData] = useState(initialData || {
+        heroTitle: "",
+        heroMobileTitle: "",
+        testimonial1: "",
+        testimonial2: "",
+        testimonial3: ""
+    });
+
+    useEffect(() => {
+        if (initialData) {
+            setFormData(initialData);
+        }
+    }, [initialData]);
+
+    return (
+        <div style={styles.itemCard}>
+            <div style={{
+                padding: '12px 16px',
+                backgroundColor: '#fef3c7',
+                border: '1px solid #fcd34d',
+                borderRadius: '6px',
+                marginBottom: '20px',
+                color: '#92400e',
+                fontSize: '13px'
+            }}>
+                💡 <strong>Tip:</strong> You can use <code>&lt;br&gt;</code> for line breaks and <code>&lt;span&gt;text&lt;/span&gt;</code> to highlight text in green/yellow.
+            </div>
+
+            <label style={styles.label}>Hero Title (Desktop) <span style={{ color: '#dc2626' }}>*</span></label>
+            <textarea
+                style={{ ...styles.adminTextarea, minHeight: '120px' }}
+                value={formData?.heroTitle || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, heroTitle: e.target.value }))}
+                placeholder="WE DON'T JUST<br><span>CAPTURE</span><br>MOMENTS..."
+            />
+
+            <label style={styles.label}>Hero Title (Mobile) <span style={{ color: '#dc2626' }}>*</span></label>
+            <textarea
+                style={{ ...styles.adminTextarea, minHeight: '80px' }}
+                value={formData?.heroMobileTitle || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, heroMobileTitle: e.target.value }))}
+                placeholder="WE DON'T JUST CAPTURE<br> MOMENTS..."
+            />
+
+            <label style={styles.label}>Testimonial 1 <span style={{ color: '#dc2626' }}>*</span></label>
+            <textarea
+                style={{ ...styles.adminTextarea, minHeight: '80px' }}
+                value={formData?.testimonial1 || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, testimonial1: e.target.value }))}
+            />
+
+            <label style={styles.label}>Testimonial 2 <span style={{ color: '#dc2626' }}>*</span></label>
+            <textarea
+                style={{ ...styles.adminTextarea, minHeight: '80px' }}
+                value={formData?.testimonial2 || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, testimonial2: e.target.value }))}
+            />
+
+            <label style={styles.label}>Testimonial 3 <span style={{ color: '#dc2626' }}>*</span></label>
+            <textarea
+                style={{ ...styles.adminTextarea, minHeight: '80px' }}
+                value={formData?.testimonial3 || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, testimonial3: e.target.value }))}
+            />
+
+            <button onClick={() => onSave(formData)} disabled={isSaving} style={styles.saveBtn}>
+                {isSaving ? 'SAVING...' : 'SAVE PHOTOGRAPHER BIO'}
+            </button>
+        </div>
+    );
 };
 
 export default Dashboard;

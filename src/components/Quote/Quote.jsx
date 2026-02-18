@@ -26,7 +26,7 @@ const Quote = () => {
       <div className={styles.tagsBar}>
         <span className={styles.tagsTitle}>Tags</span>
         <p className={styles.tagsText}>
-          Photography, Films,  Cinematic Films, Wedding Photography, Best Photographer, Travel Photography, Photography, Films,  Cinematic Films, Wedding Photography, Best Photographer, Travel Photography, Photography, Films,  Cinematic Films, Wedding Photography, Best Photographer, Travel Photography,Photography, Films,  Cinematic Films, Wedding Photography, Best Photographer, Travel Photography, and other tags for SEO
+          Dublin Photographer, Professional Photographer Dublin, Ireland Wedding Photographer, Dublin Wedding Photography, Event Photographer Dublin, Portrait Photographer Dublin, Engagement Photographer Ireland, Elopement Photographer Dublin, Travel Photographer Ireland, Corporate Event Photographer Dublin, Luxury Photography Dublin, Cinematic Wedding Photography Ireland, Creative Portrait Photography Dublin, Affordable Photographer Dublin, Destination Wedding Photographer Ireland
         </p>
       </div>
     </section>

@@ -32,7 +32,10 @@ const Header = () => {
             About
           </NavLink>
           <NavLink to="/blog" className={getLinkClass}>
-            Work
+            Portfolio
+          </NavLink>
+          <NavLink to="/faq" className={getLinkClass}>
+            FAQs
           </NavLink>
           <NavLink to="/contact" className={getLinkClass}>
             Contact
@@ -87,6 +90,13 @@ const Header = () => {
             About
           </NavLink>
           <NavLink
+            to="/faq"
+            className={getMobileLinkClass}
+            onClick={handleToggle}
+          >
+            FAQs
+          </NavLink>
+          <NavLink
             to="/contact"
             className={getMobileLinkClass}
             onClick={handleToggle}
@@ -97,14 +107,11 @@ const Header = () => {
 
         <div className={styles.socialsBlock}>
           <div className={styles.socialsTitle}>Socials</div>
-          <a href="#" className={styles.socialLink}>
+          <a href="https://www.instagram.com/aaragraphy.ie" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
             Instagram
           </a>
-          <a href="#" className={styles.socialLink}>
-            X (Prev Twitter)
-          </a>
-          <a href="#" className={styles.socialLink}>
-            Youtube
+          <a href="https://pin.it/O6Y3O4Pqh" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+            Pinterest
           </a>
         </div>
       </div>

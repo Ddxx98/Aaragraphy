@@ -259,24 +259,22 @@
     }
 
     .OverlayCard {
-        width: 93%;
-        margin: -90px auto 0;
-        /* Shift the entire container up on mobile */
+        width: 100%;
+        margin: 0 auto;
         position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-top: 0;
     }
 
     .Formcard {
         position: relative;
         width: 90%;
         max-width: 500px;
-        left: auto;
-        transform: none;
-        margin: 0 auto;
-        box-shadow: 0px 0px 8px 1px #00000014;
+        margin: -40px auto 0;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
+        border-radius: 20px;
+        z-index: 10;
     }
 
     .Emailcard {

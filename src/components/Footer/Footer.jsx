@@ -26,7 +26,7 @@ const Footer = () => {
 
                 <div className={styles.bottomRow}>
                     <p className={styles.copyright}>
-                        All Images, videos and content is copyrighted @Aarography C 2025
+                        All Images, videos and content is copyrighted @Aaragraphy C 2025
                     </p>
                 </div>
             </div>

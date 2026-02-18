@@ -83,8 +83,8 @@ const Gallery = ({ viewAll, limited }) => {
 
     return (
         <section className={styles.section}>
-            <p className={styles.subTitle}>Want to see some more magic?</p>
-            <h2 className={styles.title}>Our Gallery</h2>
+            <p className={styles.subTitle}>Curious to See More?</p>
+            <h2 className={styles.title}>Explore Our Signature Work</h2>
 
             <div className={styles.grid}>
                 {displayedImages.map((image, index) => (

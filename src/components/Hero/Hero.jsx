@@ -59,15 +59,15 @@ const Hero = () => {
 
       {/* Top Right: Camera Settings */}
       <div className={styles.topRight}>
-        <p>1/250 | 1/500 | 1/160</p>
+        <p>1/160 | 1/250 | 1/500</p>
         <p>Unscripted</p>
-        <p>f/1.8 | ISO 600</p>
+        <p>f/1.8 | ISO 100</p>
         <p>Captured</p>
       </div>
 
       {/* Bottom Left: Location Info */}
       <div className={styles.bottomLeft}>
-        <p>Since 2020</p>
+        <p>Since 2024</p>
         <p>Based in Dublin</p>
       </div>
 

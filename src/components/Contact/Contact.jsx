@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
 import emailjs from '@emailjs/browser';
 import styles from "./Contact.module.css";
+import { getFromDB } from '../../utils/fbApi';
 
 const ContactSection = ({ selectedPackage, packageNames = [] }) => {
+    const [eventTypes, setEventTypes] = useState([
+        { id: "wedding", label: "Wedding" },
+        { id: "engagement", label: "Engagement" },
+        { id: "corporate", label: "Corporate Events" },
+        { id: "baby", label: "Baby Shower" }
+    ]);
+
+    const [dynamicPackages, setDynamicPackages] = useState(packageNames);
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -18,6 +28,37 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
 
     const [status, setStatus] = useState("idle"); // idle, submitting, success, error
     const [errorMessage, setErrorMessage] = useState("");
+
+    // Fetch dynamic event types and service packages from Firebase
+    useEffect(() => {
+        const loadFormData = async () => {
+            try {
+                // Load Event Types
+                const eventData = await getFromDB('serviceList');
+                if (eventData) {
+                    const normalized = Array.isArray(eventData)
+                        ? eventData
+                        : Object.entries(eventData).map(([id, val]) => ({ ...val, id: val.id || id }));
+
+                    const types = normalized.map(s => ({
+                        id: s.service_id || s.id,
+                        label: s.label
+                    }));
+                    setEventTypes(types);
+                }
+
+                // Load Service Packages
+                const packageData = await getFromDB('services');
+                if (packageData && packageData.packages) {
+                    const titles = packageData.packages.map(p => p.title).filter(title => title);
+                    setDynamicPackages(titles);
+                }
+            } catch (error) {
+                console.error("Failed to load dynamic fields for contact form:", error);
+            }
+        };
+        loadFormData();
+    }, []);
 
     // Update form when selectedPackage prop changes
     useEffect(() => {
@@ -112,7 +153,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                 )}
 
                                 <div className={styles.fieldGroup}>
-                                    <label className={styles.label}>Your name</label>
+                                    <label className={styles.label}>Name</label>
                                     <input
                                         type="text"
                                         name="name"
@@ -162,15 +203,17 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                         disabled={status === "submitting"}
                                     >
                                         <option value="">Select Here</option>
-                                        <option value="wedding">Wedding</option>
-                                        <option value="engagement">Engagement</option>
-                                        <option value="corporate">Corporate Events</option>
-                                        <option value="baby">Baby Shower</option>
+                                        {eventTypes.map(type => (
+                                            <option key={type.id} value={type.id}>
+                                                {type.label}
+                                            </option>
+                                        ))}
+                                        <option value="other">Other</option>
                                     </select>
                                 </div>
 
                                 <div className={styles.fieldGroup}>
-                                    <label className={styles.label}>Service Package</label>
+                                    <label className={styles.label}>Collection</label>
                                     <select
                                         name="servicePackage"
                                         className={styles.select}
@@ -179,7 +222,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                         disabled={status === "submitting"}
                                     >
                                         <option value="">Select here</option>
-                                        {packageNames.map((name, index) => (
+                                        {dynamicPackages.map((name, index) => (
                                             <option key={index} value={name}>
                                                 {name}
                                             </option>
@@ -245,7 +288,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                 </div>
 
                                 <div className={styles.fieldGroup}>
-                                    <label className={styles.label}>Location (only within Netherlands)</label>
+                                    <label className={styles.label}>Location (Within Ireland)</label>
                                     <input
                                         type="text"
                                         name="location"
@@ -258,7 +301,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                 </div>
 
                                 <div className={styles.fieldGroup}>
-                                    <label className={styles.label}>Anything Else to say</label>
+                                    <label className={styles.label}>What’s on your mind?</label>
                                     <textarea
                                         name="message"
                                         placeholder="Write here"
@@ -285,7 +328,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                 {/* Email Info Card - Separate Section */}
                 <div className={styles.Emailcard}>
                     <div className={styles.emailInfo}>
-                        <h3>Have something urgent?</h3>
+                        <h3>Questions? We’re always listening!</h3>
                         <a
                             href="mailto:aaragraphy@gmail.com"
                             className={styles.emailAddress}

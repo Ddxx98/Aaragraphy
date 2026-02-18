@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Service.module.css";
+import { getFromDB } from "../../utils/fbApi";
+
+// Static Fallbacks
 import weddingImg from "../../assets/service/wedding.jpg";
 import ceremoniesImg from "../../assets/service/ceremonies.jpg";
 import corporateImg from "../../assets/service/corporate.jpg";
@@ -8,21 +11,46 @@ import travelImg from "../../assets/service/travel.jpg";
 import casualImg from "../../assets/service/casual.jpg";
 import babyImg from "../../assets/service/baby.jpg";
 
-const services = [
-    { id: "wedding", label: "Wedding", image: weddingImg },
-    { id: "ceremonies", label: "Ceremonies", image: ceremoniesImg },
-    { id: "corporate", label: "Corporate Events", image: corporateImg },
-    { id: "travel", label: "Travel", image: travelImg },
-    { id: "casual", label: "Casual Shoot", image: casualImg },
-    { id: "baby", label: "Baby Shoot", image: babyImg },
+const STATIC_SERVICES = [
+    { id: "wedding", label: "Wedding", image: weddingImg, description: "Your life's most important decision on our lens" },
+    { id: "ceremonies", label: "Ceremonies", image: ceremoniesImg, description: "Your life's most important decision on our lens" },
+    { id: "corporate", label: "Corporate Events", image: corporateImg, description: "Your life's most important decision on our lens" },
+    { id: "travel", label: "Travel", image: travelImg, description: "Your life's most important decision on our lens" },
+    { id: "casual", label: "Casual Shoot", image: casualImg, description: "Your life's most important decision on our lens" },
+    { id: "baby", label: "Baby Shoot", image: babyImg, description: "Your life's most important decision on our lens" },
 ];
 
 const Service = () => {
     const navigate = useNavigate();
     const [activeId, setActiveId] = useState("wedding");
     const [isTouch, setIsTouch] = useState(false);
+    const [services, setServices] = useState(STATIC_SERVICES);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const loadServices = async () => {
+            try {
+                const firebaseData = await getFromDB('serviceList');
+                if (firebaseData) {
+                    const normalized = (Array.isArray(firebaseData)
+                        ? firebaseData
+                        : Object.entries(firebaseData).map(([id, val]) => ({ ...val, id: val.id || id }))
+                    ).map(s => ({
+                        ...s,
+                        id: s.service_id || s.id, // Support both slug and timestamp ID
+                        description: s.description || "Your life's most important decision on our lens"
+                    }));
+                    setServices(normalized);
+                }
+            } catch (error) {
+                console.error("Failed to load services from Firebase:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadServices();
+
         const mq = window.matchMedia("(hover: none)");
         setIsTouch(mq.matches);
         const handler = (e) => setIsTouch(e.matches);
@@ -44,8 +72,8 @@ const Service = () => {
 
     return (
         <section className={styles.section}>
-            <p className={styles.subTitle}>What services we offer?</p>
-            <h2 className={styles.title}>We Capture these for you</h2>
+            <p className={styles.subTitle}>Ready to plan your Big Day?</p>
+            <h2 className={styles.title}>Let’s connect and create something amazing together!</h2>
 
             <div className={styles.servicesList}>
                 {services.map((service) => (
@@ -66,7 +94,7 @@ const Service = () => {
                         {activeId === service.id && (
                             <div className={styles.activeContent}>
                                 <p className={styles.description}>
-                                    Your life&apos;s most important decision on our lens
+                                    {service.description}
                                 </p>
                                 <button
                                     className={styles.contactBtn}
@@ -75,7 +103,7 @@ const Service = () => {
                                         navigate('/contact');
                                     }}
                                 >
-                                    CONTACT
+                                    Let's Go
                                 </button>
                             </div>
                         )}
@@ -85,9 +113,9 @@ const Service = () => {
 
             <button
                 className={styles.mainContactBtn}
-                onClick={() => navigate('/contact')}
+                onClick={() => navigate('/faq')}
             >
-                CONTACT
+                FAQ
             </button>
         </section>
     );

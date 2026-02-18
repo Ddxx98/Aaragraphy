@@ -144,7 +144,7 @@ const ServicePackage = ({ onSelectPackage, onPackagesLoaded }) => {
 
     return (
         <section className={styles.section} id="pricing">
-            <h2 className={styles.mainTitle}>Service Packages</h2>
+            <h2 className={styles.mainTitle}>Collection</h2>
 
             <div className={styles.packagesContainer}>
                 {packages.map((pkg, index) => (
@@ -176,7 +176,7 @@ const ServicePackage = ({ onSelectPackage, onPackagesLoaded }) => {
                                 className={styles.contactLink}
                                 onClick={(e) => handleSelect(e, pkg.title)}
                             >
-                                Contact for this
+                                Get in Touch
                             </a>
                         </div>
                     </div>

@@ -82,8 +82,8 @@ const RecentSection = () => {
 
   return (
     <section className={styles.section}>
-      <p className={styles.subTitle}>You are here to check our work right?</p>
-      <h2 className={styles.title}>Recent captures</h2>
+      <p className={styles.subTitle}>A Glimpse Into Our Signature Work</p>
+      <h2 className={styles.title}>Recent Highlights</h2>
 
       <div className={styles.grid}>
         {items.map((item) => (

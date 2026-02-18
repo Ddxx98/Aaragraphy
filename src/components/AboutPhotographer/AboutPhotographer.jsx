@@ -27,43 +27,28 @@ const STATIC_DATA = {
 };
 
 const AboutPhotographer = () => {
-    const [data, setData] = useState(STATIC_DATA);
+    const [data, setData] = useState({
+        heroTitle: "",
+        heroMobileTitle: "",
+        testimonialText: ""
+    });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                // Firebase Fetching
                 const firebaseData = await getFromDB('about_photographer');
                 if (firebaseData) {
                     setData({
-                        heroTitle: firebaseData.heroTitle ? (
-                            <div dangerouslySetInnerHTML={{ __html: firebaseData.heroTitle }} />
-                        ) : STATIC_DATA.heroTitle,
-                        heroMobileTitle: firebaseData.heroMobileTitle ? (
-                            <div dangerouslySetInnerHTML={{ __html: firebaseData.heroMobileTitle }} />
-                        ) : STATIC_DATA.heroMobileTitle,
-                        testimonialText: firebaseData.testimonialText || STATIC_DATA.testimonialText
+                        heroTitle: firebaseData.heroTitle || "",
+                        heroMobileTitle: firebaseData.heroMobileTitle || "",
+                        testimonial1: firebaseData.testimonial1 || "",
+                        testimonial2: firebaseData.testimonial2 || "",
+                        testimonial3: firebaseData.testimonial3 || ""
                     });
-                } else {
-                    /* Commented out WordPress Dynamic Fetching
-                    const pages = await fetchFromWP('/pages', { slug: 'home' });
-                    if (pages && pages.length > 0) {
-                        const acf = getACF(pages[0]);
-                        setData({
-                            heroTitle: acf.about_hero_title ? (
-                                <div dangerouslySetInnerHTML={{ __html: acf.about_hero_title }} />
-                            ) : STATIC_DATA.heroTitle,
-                            heroMobileTitle: acf.about_hero_mobile_title ? (
-                                <div dangerouslySetInnerHTML={{ __html: acf.about_hero_mobile_title }} />
-                            ) : STATIC_DATA.heroMobileTitle,
-                            testimonialText: acf.about_testimonial_text || STATIC_DATA.testimonialText
-                        });
-                    }
-                    */
                 }
             } catch (error) {
-                console.error("Failed to load dynamic about photographer data from Firebase:", error);
+                console.error("Failed to load dynamic about photographer data:", error);
             } finally {
                 setLoading(false);
             }
@@ -73,30 +58,42 @@ const AboutPhotographer = () => {
     }, []);
 
     if (loading) {
-        return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>;
+        return <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'var(--bg-green-unified)', color: 'white' }}>Loading...</div>;
     }
+
+    // Helper to render title with fallback
+    const renderTitle = (title, fallback) => {
+        if (!title) return fallback;
+        return <div dangerouslySetInnerHTML={{ __html: title }} />;
+    };
 
     return (
         <section className={styles.section}>
             {/* Left: Hero text */}
             <div className={styles.heroColumn}>
                 <h1 className={styles.heroTitle}>
-                    {data.heroTitle}
+                    {renderTitle(data.heroTitle, STATIC_DATA.heroTitle)}
                 </h1>
             </div>
 
             <div className={styles.heroMobileColumn}>
                 <h1 className={styles.heroTitle}>
-                    {data.heroMobileTitle}
+                    {renderTitle(data.heroMobileTitle, STATIC_DATA.heroMobileTitle)}
                 </h1>
             </div>
 
             {/* Right: Scrolling testimonial */}
             <div className={styles.testimonialColumn}>
                 <div className={styles.testimonialWrapper}>
-                    <p className={styles.testimonialText}>{data.testimonialText}</p>
-                    <p className={styles.testimonialText}>{data.testimonialText}</p>
-                    <p className={styles.testimonialText}>{data.testimonialText}</p>
+                    <p className={styles.testimonialText}>
+                        {data.testimonial1 || STATIC_DATA.testimonialText}
+                    </p>
+                    <p className={styles.testimonialText}>
+                        {data.testimonial2 || STATIC_DATA.testimonialText}
+                    </p>
+                    <p className={styles.testimonialText}>
+                        {data.testimonial3 || STATIC_DATA.testimonialText}
+                    </p>
                 </div>
             </div>
         </section>

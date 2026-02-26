@@ -18,23 +18,26 @@
   --text-white-soft: #EAEAD4;
 
   /* Spacing System */
-  --section-padding-desktop: 80px;
-  --section-padding-mobile: 64px;
+  --section-padding-desktop: 60px;
+  --section-padding-mobile: 40px;
   --section-padding-inline: 40px;
   --container-max-width: 100%;
-}
-
-/* Container utility for consistent max-widths */
-.container {
-  max-width: var(--container-max-width);
-  margin: 0 auto;
-  padding-inline: var(--section-padding-inline);
+  --header-height: 72px;
 }
 
 @media (max-width: 768px) {
+  :root {
+    --header-height: 60px;
+  }
+
   .container {
     padding-inline: 16px;
   }
+}
+
+.homePageContainer {
+  --section-padding-desktop: 40px;
+  --section-padding-mobile: 24px;
 }
 
 /* 1. Use a more-intuitive box-sizing model */

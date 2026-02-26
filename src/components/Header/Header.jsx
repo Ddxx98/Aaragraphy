@@ -80,7 +80,7 @@ const Header = () => {
             className={getMobileLinkClass}
             onClick={handleToggle}
           >
-            Work
+            Portfolio
           </NavLink>
           <NavLink
             to="/about"

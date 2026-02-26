@@ -130,7 +130,10 @@ const Dashboard = () => {
         { id: 'faq', label: 'FAQs' },
         { id: 'gallery', label: 'Gallery' },
         { id: 'posts', label: 'Blog Posts' },
-        { id: 'reviews', label: 'Reviews' }
+        { id: 'reviews', label: 'Reviews' },
+        { id: 'instagram', label: 'Instagram Feed' },
+        { id: 'quote', label: 'Quote Content' },
+        { id: 'settings', label: 'Site Settings' }
     ];
 
     return (
@@ -244,6 +247,7 @@ const Dashboard = () => {
                     {activeTab === 'posts' ? (
                         <BlogManager
                             initialData={data?.posts || []}
+                            categories={data?.serviceList ? [...new Set((Array.isArray(data.serviceList) ? data.serviceList : Object.values(data.serviceList)).map(s => s.label).filter(Boolean))] : []}
                             onSaveAll={(val) => handleSave('posts', val)}
                             isSaving={saving}
                         />
@@ -252,6 +256,27 @@ const Dashboard = () => {
                             label={activeTab}
                             initialData={data?.[activeTab] || []}
                             onSave={(val, bypass) => handleSave(activeTab, val, bypass)}
+                            isSaving={saving}
+                        />
+                    )}
+                    {activeTab === 'instagram' && (
+                        <InstagramFeedEditor
+                            initialData={data?.instagram || []}
+                            onSave={(val) => handleSave('instagram', val, true)}
+                            isSaving={saving}
+                        />
+                    )}
+                    {activeTab === 'quote' && (
+                        <QuoteEditor
+                            initialData={data?.quote}
+                            onSave={(val) => handleSave('quote', val)}
+                            isSaving={saving}
+                        />
+                    )}
+                    {activeTab === 'settings' && (
+                        <SettingsEditor
+                            initialData={data?.settings}
+                            onSave={(val) => handleSave('settings', val)}
                             isSaving={saving}
                         />
                     )}
@@ -726,7 +751,7 @@ const AboutEditor = ({ initialData, onSave, isSaving }) => {
     );
 };
 
-const BlogManager = ({ initialData, onSaveAll, isSaving }) => {
+const BlogManager = ({ initialData, categories, onSaveAll, isSaving }) => {
     const [posts, setPosts] = useState(Array.isArray(initialData) ? initialData : []);
     const [editingPost, setEditingPost] = useState(null);
 
@@ -742,7 +767,7 @@ const BlogManager = ({ initialData, onSaveAll, isSaving }) => {
     const addPost = () => {
         const newPost = {
             id: Date.now(),
-            title: "", author: "", category: "Wedding", date: new Date().toISOString().split('T')[0],
+            title: "", author: "", category: categories && categories.length > 0 ? categories[0] : "Wedding", date: new Date().toISOString().split('T')[0],
             location: "", groom: "", bride: "", mainImage: "", intro: "",
             section1: { title: "The Beginning", text: "", images: [] },
             section2: { title: "The Ceremony", text: "", images: [] },
@@ -777,6 +802,7 @@ const BlogManager = ({ initialData, onSaveAll, isSaving }) => {
                 </button>
                 <BlogPostEditor
                     post={editingPost}
+                    categories={categories}
                     onSave={savePost}
                     isSaving={isSaving}
                 />
@@ -810,7 +836,7 @@ const BlogManager = ({ initialData, onSaveAll, isSaving }) => {
     );
 };
 
-const BlogPostEditor = ({ post, onSave, isSaving }) => {
+const BlogPostEditor = ({ post, categories, onSave, isSaving }) => {
     const [formData, setFormData] = useState({
         ...post,
         section1: post.section1 || { title: "The Beginning", text: "", images: [] },
@@ -871,11 +897,9 @@ const BlogPostEditor = ({ post, onSave, isSaving }) => {
                             value={formData.category}
                             onChange={(e) => handleChange('category', e.target.value)}
                         >
-                            <option value="Wedding">Wedding</option>
-                            <option value="Engagement">Engagement</option>
-                            <option value="Event">Event</option>
-                            <option value="Portrait">Portrait</option>
-                            <option value="Branding">Branding</option>
+                            {(categories && categories.length > 0 ? categories : ["Wedding", "Engagement", "Event", "Portrait", "Branding"]).map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                            ))}
                         </select>
                     </div>
                     <div>
@@ -1088,18 +1112,6 @@ const PhotographerEditor = ({ initialData, onSave, isSaving }) => {
 
     return (
         <div style={styles.itemCard}>
-            <div style={{
-                padding: '12px 16px',
-                backgroundColor: '#fef3c7',
-                border: '1px solid #fcd34d',
-                borderRadius: '6px',
-                marginBottom: '20px',
-                color: '#92400e',
-                fontSize: '13px'
-            }}>
-                💡 <strong>Tip:</strong> You can use <code>&lt;br&gt;</code> for line breaks and <code>&lt;span&gt;text&lt;/span&gt;</code> to highlight text in green/yellow.
-            </div>
-
             <label style={styles.label}>Hero Title (Desktop) <span style={{ color: '#dc2626' }}>*</span></label>
             <textarea
                 style={{ ...styles.adminTextarea, minHeight: '120px' }}
@@ -1139,6 +1151,105 @@ const PhotographerEditor = ({ initialData, onSave, isSaving }) => {
 
             <button onClick={() => onSave(formData)} disabled={isSaving} style={styles.saveBtn}>
                 {isSaving ? 'SAVING...' : 'SAVE PHOTOGRAPHER BIO'}
+            </button>
+        </div>
+    );
+};
+
+const InstagramFeedEditor = ({ initialData, onSave, isSaving }) => {
+    const [links, setLinks] = useState(Array.isArray(initialData) ? initialData : []);
+
+    useEffect(() => {
+        if (initialData) {
+            const normalized = Array.isArray(initialData)
+                ? initialData
+                : Object.values(initialData);
+            setLinks(normalized);
+        }
+    }, [initialData]);
+
+    const addLink = () => setLinks([...links, { link: "" }]);
+    const removeLink = (index) => setLinks(links.filter((_, i) => i !== index));
+    const updateLink = (index, val) => {
+        const newLinks = [...links];
+        newLinks[index] = { link: val };
+        setLinks(newLinks);
+    };
+
+    return (
+        <div>
+            <div style={{ marginBottom: '20px', padding: '12px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', color: '#166534', fontSize: '14px' }}>
+                💡 <strong>Tip:</strong> Just paste the Instagram post URL (e.g., https://www.instagram.com/p/C123...). The website will handle the rest!
+            </div>
+            {links.map((item, idx) => (
+                <div key={idx} style={{ ...styles.itemCard, display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <div style={{ flex: 1 }}>
+                        <label style={styles.label}>Post #{idx + 1} URL</label>
+                        <input
+                            style={styles.adminInput}
+                            value={item.link}
+                            onChange={(e) => updateLink(idx, e.target.value)}
+                            placeholder="https://www.instagram.com/p/..."
+                        />
+                    </div>
+                    <button onClick={() => removeLink(idx)} style={{ ...styles.deleteBtn, marginTop: '15px' }}>Remove</button>
+                </div>
+            ))}
+            <button onClick={addLink} style={{ ...styles.addBtn, marginBottom: '20px' }}>+ Add Post Link</button>
+            <div style={{ marginTop: '20px' }}>
+                <button onClick={() => onSave(links)} disabled={isSaving} style={styles.saveBtn}>
+                    {isSaving ? 'SAVING...' : 'SAVE INSTAGRAM FEED'}
+                </button>
+            </div>
+        </div>
+    );
+};
+
+const QuoteEditor = ({ initialData, onSave, isSaving }) => {
+    const [formData, setFormData] = useState(initialData || {
+        tags: "Dublin Photographer, Professional Photographer Dublin, Ireland Wedding Photographer, Dublin Wedding Photography, Event Photographer Dublin, Portrait Photographer Dublin, Engagement Photographer Ireland, Elopement Photographer Dublin, Travel Photographer Ireland, Corporate Event Photographer Dublin, Luxury Photography Dublin, Cinematic Wedding Photography Ireland, Creative Portrait Photography Dublin, Affordable Photographer Dublin, Destination Wedding Photographer Ireland"
+    });
+
+    useEffect(() => {
+        if (initialData) setFormData(initialData);
+    }, [initialData]);
+
+    return (
+        <div style={styles.itemCard}>
+            <label style={styles.label}>SEO Tags (Comma separated) <span style={{ color: '#dc2626' }}>*</span></label>
+            <textarea
+                style={{ ...styles.adminTextarea, minHeight: '150px' }}
+                value={formData?.tags || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
+                placeholder="Tag 1, Tag 2, Tag 3..."
+            />
+            <button onClick={() => onSave(formData)} disabled={isSaving} style={styles.saveBtn}>
+                {isSaving ? 'SAVING...' : 'SAVE QUOTE CONTENT'}
+            </button>
+        </div>
+    );
+};
+
+const SettingsEditor = ({ initialData, onSave, isSaving }) => {
+    const [formData, setFormData] = useState(initialData || {
+        copyrightYear: "2025"
+    });
+
+    useEffect(() => {
+        if (initialData) setFormData(initialData);
+    }, [initialData]);
+
+    return (
+        <div style={styles.itemCard}>
+            <label style={styles.label}>Copyright Year <span style={{ color: '#dc2626' }}>*</span></label>
+            <input
+                style={styles.adminInput}
+                value={formData?.copyrightYear || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, copyrightYear: e.target.value }))}
+                placeholder="2025"
+            />
+            <button onClick={() => onSave(formData)} disabled={isSaving} style={styles.saveBtn}>
+                {isSaving ? 'SAVING...' : 'SAVE SETTINGS'}
             </button>
         </div>
     );

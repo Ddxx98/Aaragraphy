@@ -1,5 +1,5 @@
 .section {
-    padding: 100px 0 100px;
+    padding: var(--section-padding-desktop) var(--section-padding-inline);
     background-color: var(--bg-cream);
     font-family: var(--font-sans);
 }
@@ -23,7 +23,8 @@
 
 .OverlayCard {
     background-color: white;
-    width: 90%;
+    width: 100%;
+    max-width: var(--container-max-width);
     margin: 0 auto;
     position: relative;
     display: flex;
@@ -45,7 +46,8 @@
 
 /* Email Card Specific Styles - Separate Section */
 .Emailcard {
-    width: 90%;
+    width: 100%;
+    max-width: var(--container-max-width);
     margin: 10px auto 0;
     background-color: white;
     padding: 60px 0;
@@ -249,7 +251,7 @@
 /* Mobile */
 @media (max-width: 768px) {
     .section {
-        padding: 60px 0 60px;
+        padding: var(--section-padding-mobile) 16px;
     }
 
     .title {
@@ -278,7 +280,6 @@
     }
 
     .Emailcard {
-        width: 93%;
         margin-top: 3px;
         padding: 40px 20px;
     }

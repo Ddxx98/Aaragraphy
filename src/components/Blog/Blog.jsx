@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Blog.module.css";
 import ArrowDropdown from "../../assets/arrow_drop_down.svg";
 
-const Blog = ({ posts = [], activeView, setActiveView }) => {
+const Blog = ({ posts = [], categories = ["All"], activeView, setActiveView }) => {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -14,7 +14,6 @@ const Blog = ({ posts = [], activeView, setActiveView }) => {
   const view = activeView || localActiveView;
   const setView = setActiveView || setLocalActiveView;
 
-  const categories = ["All", "Wedding", "Corporate", "Travel", "Baby Shower"];
   const views = ["Blog", "Gallery"];
 
   const filteredPosts = posts.filter((post) => {
@@ -133,41 +132,48 @@ const Blog = ({ posts = [], activeView, setActiveView }) => {
 
       {view === "Blog" && (
         <div className={styles.grid}>
-          {filteredPosts.map((post) => (
-            <article
-              key={post.id}
-              className={styles.card}
-              onClick={() => handleBlogClick(post.id)}
-              onKeyDown={(e) => handleKeyDown(e, post.id)}
-              role="button"
-              tabIndex={0}
-              aria-label={`Read ${post.title}`}
-            >
-              <div className={styles.imageWrapper}>
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className={styles.image}
-                />
-              </div>
-
-              <div className={styles.cardBody}>
-                <div className={styles.cardTitleRow}>
-                  <h3 className={styles.cardTitle}>{post.title}</h3>
-                  <span className={styles.arrow}>&rarr;</span>
+          {filteredPosts.length > 0 ? (
+            filteredPosts.map((post) => (
+              <article
+                key={post.id}
+                className={styles.card}
+                onClick={() => handleBlogClick(post.id)}
+                onKeyDown={(e) => handleKeyDown(e, post.id)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Read ${post.title}`}
+              >
+                <div className={styles.imageWrapper}>
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className={styles.image}
+                  />
                 </div>
 
-                <p className={styles.names}>
-                  {post.groom} <span className={styles.weds}>&</span> {post.bride}
-                </p>
+                <div className={styles.cardBody}>
+                  <div className={styles.cardTitleRow}>
+                    <h3 className={styles.cardTitle}>{post.title}</h3>
+                    <span className={styles.arrow}>&rarr;</span>
+                  </div>
 
-                <p className={styles.dateRow}>
-                  <span className={styles.dateLabel}>Date:</span>{" "}
-                  <span className={styles.dateValue}>{post.date}</span>
-                </p>
-              </div>
-            </article>
-          ))}
+                  <p className={styles.names}>
+                    {post.groom} <span className={styles.weds}>&</span> {post.bride}
+                  </p>
+
+                  <p className={styles.dateRow}>
+                    <span className={styles.dateLabel}>Date:</span>{" "}
+                    <span className={styles.dateValue}>{post.date}</span>
+                  </p>
+                </div>
+              </article>
+            ))
+          ) : (
+            <div className={styles.emptyState}>
+              <h3>No stories yet</h3>
+              <p>We haven't shared anything in this category yet. Check back soon!</p>
+            </div>
+          )}
         </div>
       )}
     </section>

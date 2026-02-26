@@ -28,18 +28,19 @@ const STATIC_POSTS = [
 
 const Blogs = () => {
     const [blogPosts, setBlogPosts] = useState(STATIC_POSTS);
+    const [categories, setCategories] = useState(["All"]);
     const [loading, setLoading] = useState(true);
     const [activeView, setActiveView] = useState("Blog");
 
     useEffect(() => {
-        const loadPosts = async () => {
+        const loadInitialData = async () => {
             try {
-                // Firebase Fetching
-                const firebaseData = await getFromDB('posts');
-                if (firebaseData) {
-                    const postsArray = (Array.isArray(firebaseData)
-                        ? firebaseData
-                        : Object.entries(firebaseData).map(([id, val]) => ({ id, ...val }))
+                // 1. Fetch Posts
+                const postsData = await getFromDB('posts');
+                if (postsData) {
+                    const postsArray = (Array.isArray(postsData)
+                        ? postsData
+                        : Object.entries(postsData).map(([id, val]) => ({ id, ...val }))
                     ).map(post => ({
                         ...post,
                         image: post.mainImage || post.image || blogFallback
@@ -48,15 +49,30 @@ const Blogs = () => {
                 } else {
                     setBlogPosts(STATIC_POSTS);
                 }
+
+                // 2. Fetch Service Labels for Categories
+                const servicesData = await getFromDB('serviceList');
+                if (servicesData) {
+                    const labels = Array.isArray(servicesData)
+                        ? servicesData.map(s => s.label)
+                        : Object.values(servicesData).map(s => s.label);
+
+                    const uniqueLabels = ["All", ...new Set(labels.filter(l => l))];
+                    setCategories(uniqueLabels);
+                } else {
+                    setCategories(["All", "Wedding", "Corporate", "Travel", "Baby Shower"]);
+                }
+
             } catch (error) {
-                console.error("Failed to load blog posts from Firebase, using static fallback:", error);
+                console.error("Failed to load blog data from Firebase:", error);
                 setBlogPosts(STATIC_POSTS);
+                setCategories(["All", "Wedding", "Corporate", "Travel", "Baby Shower"]);
             } finally {
                 setLoading(false);
             }
         };
 
-        loadPosts();
+        loadInitialData();
     }, []);
 
     if (loading) {
@@ -67,6 +83,7 @@ const Blogs = () => {
         <div>
             <Blog
                 posts={blogPosts}
+                categories={categories}
                 activeView={activeView}
                 setActiveView={setActiveView}
             />

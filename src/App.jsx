@@ -10,11 +10,13 @@ import Login from './pages/Admin/Login';
 import Dashboard from './pages/Admin/Dashboard';
 import Faq from './pages/Faq/Faq';
 import { AuthProvider } from './context/AuthContext';
+import ScrollToTop from './utils/ScrollToTop';
 import './App.css';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AuthProvider>
         <Routes>
           <Route element={<Layout />}>

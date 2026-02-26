@@ -157,7 +157,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                     <input
                                         type="text"
                                         name="name"
-                                        placeholder="Your name"
+                                        placeholder="Name"
                                         className={styles.input}
                                         value={formData.name}
                                         onChange={handleChange}
@@ -171,7 +171,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                     <input
                                         type="email"
                                         name="email"
-                                        placeholder="Ex: Emailemail@gmail.com"
+                                        placeholder="Ex: Email@gmail.com"
                                         className={styles.input}
                                         value={formData.email}
                                         onChange={handleChange}
@@ -194,7 +194,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                 </div>
 
                                 <div className={styles.fieldGroup}>
-                                    <label className={styles.label}>Type of Event</label>
+                                    <label className={styles.label}>Category</label>
                                     <select
                                         name="eventType"
                                         className={styles.select}
@@ -202,7 +202,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                         onChange={handleChange}
                                         disabled={status === "submitting"}
                                     >
-                                        <option value="">Select Here</option>
+                                        <option value="">Select</option>
                                         {eventTypes.map(type => (
                                             <option key={type.id} value={type.id}>
                                                 {type.label}
@@ -221,7 +221,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                         onChange={handleChange}
                                         disabled={status === "submitting"}
                                     >
-                                        <option value="">Select here</option>
+                                        <option value="">Select</option>
                                         {dynamicPackages.map((name, index) => (
                                             <option key={index} value={name}>
                                                 {name}
@@ -292,7 +292,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                     <input
                                         type="text"
                                         name="location"
-                                        placeholder="Write here"
+                                        placeholder="Location"
                                         className={styles.input}
                                         value={formData.location}
                                         onChange={handleChange}
@@ -304,7 +304,7 @@ const ContactSection = ({ selectedPackage, packageNames = [] }) => {
                                     <label className={styles.label}>What’s on your mind?</label>
                                     <textarea
                                         name="message"
-                                        placeholder="Write here"
+                                        placeholder="Tell me more"
                                         className={styles.textarea}
                                         rows="4"
                                         value={formData.message}

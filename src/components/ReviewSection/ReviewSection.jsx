@@ -89,7 +89,7 @@ const ReviewSection = ({ limited }) => {
   return (
     <section className={`${styles.section} ${limited ? styles.limited : ''}`}>
       <p className={styles.subTitle}>What people says about us?</p>
-      <h2 className={styles.title}>Love from people</h2>
+      <h2 className={styles.title}>Love Notes From Our Clients</h2>
 
       {/* Only show controls in limited/carousel mode if there's what to slide - 
           actually user said "show only 2", so if limited, controls are less useful 

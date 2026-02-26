@@ -5,10 +5,11 @@ import RecentSection from "../components/RecentSection/RecentSection";
 import ReviewSection from "../components/ReviewSection/ReviewSection";
 import Gallery from "../components/Gallery/Gallery";
 import Section from "../components/Section/Section";
+import Instagram from "../components/Instagram/Instagram";
 
 const Home = () => {
     return (
-        <div>
+        <div className="homePageContainer">
             <div id="explore">
                 <Hero />
             </div>
@@ -23,6 +24,9 @@ const Home = () => {
             </div>
             <div id="gallery">
                 <Gallery viewAll={true} limited={true} />
+            </div>
+            <div id="instagram">
+                <Instagram />
             </div>
             <div id="about">
                 <Section />

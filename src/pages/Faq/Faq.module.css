@@ -195,7 +195,7 @@
 /* Mobile Adjustments */
 @media (max-width: 768px) {
     .section {
-        padding: 120px 16px 80px;
+        padding: var(--section-padding-mobile) 16px;
     }
 
     .title {

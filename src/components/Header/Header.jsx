@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
 import menu from "../../assets/menu.svg";
 import close from "../../assets/close.svg";
-
+import logo from "../../assets/logo/logo1.png";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +20,7 @@ const Header = () => {
     <header className={styles.header}>
       <div className={styles.inner}>
         <NavLink to="/" className={styles.logo}>
-          Aaragraphy
+          <img src={logo} alt="Logo" />
         </NavLink>
 
         {/* Desktop nav */}
@@ -57,7 +57,9 @@ const Header = () => {
         className={`${styles.mobileOverlay} ${isOpen ? styles.mobileOverlayOpen : ""}`}
       >
         <div className={styles.overlayHeader}>
-          <div className={styles.logoOverlay}>Aaragraphy</div>
+          <NavLink to="/" className={styles.logoOverlay} onClick={handleToggle}>
+            <img src={logo} alt="Logo" />
+          </NavLink>
           <button
             className={`${styles.menuButton} ${styles.menuButtonOverlay} ${isOpen ? styles.menuButtonOpen : ""}`}
             onClick={handleToggle}

@@ -20,16 +20,16 @@ const Home = () => {
                 <RecentSection />
             </div>
             <div id="reviews">
-                <ReviewSection limited={true} />
+                <ReviewSection />
             </div>
             <div id="gallery">
                 <Gallery viewAll={true} limited={true} />
             </div>
-            <div id="instagram">
-                <Instagram />
-            </div>
             <div id="about">
                 <Section />
+            </div>
+            <div id="instagram">
+                <Instagram />
             </div>
         </div>
     );

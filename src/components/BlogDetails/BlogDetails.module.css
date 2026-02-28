@@ -1,7 +1,6 @@
 .container {
     background-color: var(--bg-cream);
     min-height: 100vh;
-    margin-top: 50px;
     padding: var(--section-padding-desktop) var(--section-padding-inline);
     color: var(--text-primary);
     font-family: var(--font-serif);

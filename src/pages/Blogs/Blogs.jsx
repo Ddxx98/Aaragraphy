@@ -90,7 +90,7 @@ const Blogs = () => {
             {activeView === "Gallery" && (
                 <Gallery viewAll={false} limited={false} />
             )}
-            <ReviewSection limited={false} />
+            <ReviewSection />
         </div>
     );
 };

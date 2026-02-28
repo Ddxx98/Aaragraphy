@@ -50,7 +50,7 @@
     max-width: var(--container-max-width);
     margin: 10px auto 0;
     background-color: white;
-    padding: 60px 0;
+    padding: 60px 40px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -234,12 +234,13 @@
 
 .emailAddress {
     font-family: var(--font-serif);
-    font-size: 80px;
+    font-size: clamp(32px, 8vw, 80px);
     color: var(--green-dropdown);
     font-style: italic;
     text-decoration: none;
     transition: all 0.3s ease;
     display: inline-block;
+    word-break: break-all;
 }
 
 .emailAddress:hover {
@@ -281,7 +282,7 @@
 
     .Emailcard {
         margin-top: 3px;
-        padding: 40px 20px;
+        padding: var(--section-padding-mobile) 20px;
     }
 
     .form {
@@ -310,6 +311,6 @@
     }
 
     .emailAddress {
-        font-size: 28px;
+        font-size: clamp(20px, 7vw, 28px);
     }
 }

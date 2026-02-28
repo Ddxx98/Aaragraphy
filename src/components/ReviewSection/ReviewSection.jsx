@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./ReviewSection.module.css";
-import { fetchFromWP, getFeaturedImage, getACF, getImageUrl } from "../../utils/wpApi";
 import { getFromDB } from "../../utils/fbApi";
 import coupleFallback from "../../assets/couple.jpg";
 
@@ -12,26 +11,51 @@ const STATIC_REVIEWS = [
     authorLine: "Happy Client",
     groom: "Aniketh Russel",
     bride: "Arunima David",
-    date: "2024-10-12",
+    date: "14-10-2025",
+  },
+  {
+    id: "r2",
+    image: coupleFallback,
+    text: "The attention to detail and ability to stay invisible while capturing the most intimate moments was truly remarkable. We couldn't be happier with our wedding gallery!",
+    authorLine: "Bride's Sister",
+    groom: "Rahul",
+    bride: "Priya",
+    date: "20-11-2025",
+  },
+  {
+    id: "r3",
+    image: coupleFallback,
+    text: "Every single frame tells a story. The composition and lighting are just breathtaking. It felt like reliving our special day all over again when we saw the photos.",
+    authorLine: "Groom's Mother",
+    groom: "James",
+    bride: "Sarah",
+    date: "05-12-2025",
+  },
+  {
+    id: "r4",
+    image: coupleFallback,
+    text: "Professional, creative, and such a joy to work with. They made everyone feel so comfortable in front of the camera, and the results speak for themselves. Simply stunning!",
+    authorLine: "Best Friend",
+    groom: "Vikram",
+    bride: "Anjali",
+    date: "12-01-2026",
   }
 ];
 
-const ReviewSection = ({ limited }) => {
+const ReviewSection = () => {
   const [reviews, setReviews] = useState(STATIC_REVIEWS);
-  const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     const loadReviews = async () => {
       try {
-        // Firebase Fetching - Use 'reviews' collection from dashboard
         const firebaseData = await getFromDB('reviews');
         if (firebaseData) {
           const reviewsArray = Array.isArray(firebaseData)
             ? firebaseData
             : Object.entries(firebaseData).map(([id, val]) => ({ id, ...val }));
 
-          // Sort by ID (usually timestamp) descending to show newest first
           const sorted = reviewsArray.sort((a, b) => b.id - a.id);
 
           const mappedReviews = sorted.map(rev => ({
@@ -59,56 +83,46 @@ const ReviewSection = ({ limited }) => {
     loadReviews();
   }, []);
 
-  // Handle limiting
-  const displayedReviews = limited ? reviews.slice(0, 2) : reviews;
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollTo = direction === 'left'
+        ? scrollLeft - clientWidth
+        : scrollLeft + clientWidth;
 
-  const prev = () =>
-    setIndex((prevIndex) =>
-      prevIndex === 0 ? displayedReviews.length - 1 : prevIndex - 1
-    );
-
-  const next = () =>
-    setIndex((prevIndex) =>
-      prevIndex === displayedReviews.length - 1 ? 0 : prevIndex + 1
-    );
+      scrollRef.current.scrollTo({
+        left: scrollTo,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   if (loading) {
     return <div style={{ padding: '60px', textAlign: 'center' }}>Loading love from people...</div>;
   }
 
-  if (displayedReviews.length === 0) return null;
-
-  // For carousel/limited view
-  const current = displayedReviews[index];
-  const nextIdx = (index + 1) % displayedReviews.length;
-  const second = displayedReviews[nextIdx];
-
-  // Which items to actually render in the grid
-  const itemsToRender = limited ? [current, second] : displayedReviews;
+  if (reviews.length === 0) return null;
 
   return (
-    <section className={`${styles.section} ${limited ? styles.limited : ''}`}>
+    <section className={styles.section}>
       <p className={styles.subTitle}>What people says about us?</p>
       <h2 className={styles.title}>Love Notes From Our Clients</h2>
 
-      {/* Only show controls in limited/carousel mode if there's what to slide - 
-          actually user said "show only 2", so if limited, controls are less useful 
-          unless we want to cycle them. Let's hide them if not limited to keep grid clean. */}
-      {limited && displayedReviews.length > 1 && (
+      {reviews.length > 3 && (
         <div className={styles.controls}>
-          <button className={styles.circleButton} onClick={prev} type="button">
+          <button className={styles.circleButton} onClick={() => scroll('left')} aria-label="Previous">
             ←
           </button>
-          <button className={styles.circleButton} onClick={next} type="button">
+          <button className={styles.circleButton} onClick={() => scroll('right')} aria-label="Next">
             →
           </button>
         </div>
       )}
 
-      <div className={styles.grid}>
-        {itemsToRender.map((item, i) => (
+      <div className={styles.grid} ref={scrollRef}>
+        {reviews.map((item) => (
           item && (
-            <article key={item.id + (limited ? i : '')} className={styles.card} style={!limited ? { marginBottom: '40px' } : {}}>
+            <article key={item.id} className={styles.card}>
               <div className={styles.imageWrapper}>
                 <img
                   src={item.image}
@@ -119,7 +133,7 @@ const ReviewSection = ({ limited }) => {
 
               <div className={styles.body}>
                 <p className={styles.text}>{item.text}</p>
-                <p className={styles.authorLine}>{item.authorLine}</p>
+                <p className={styles.authorLine}>by {item.authorLine}</p>
                 <p className={styles.coupleLine}>{item.groom} <span className={styles.weds}>Weds</span> {item.bride}</p>
                 <p className={styles.dateLine}>
                   <span className={styles.dateLabel}>Date:</span> {item.date}

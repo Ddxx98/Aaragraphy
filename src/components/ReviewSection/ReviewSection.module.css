@@ -52,28 +52,47 @@
     border-color: var(--green-dropdown);
 }
 
-/* cards grid */
+/* carousel container */
 .grid {
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
     gap: 32px;
+    padding: 20px 0;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+    scroll-behavior: smooth;
+    text-align: left;
+}
+
+.grid::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari/Webkit */
 }
 
 /* single card */
 .card {
-    /* background-color: #f0ebde; */
+    flex: 0 0 calc(33.333% - 22px);
+    /* 3 cards per view on desktop */
+    scroll-snap-align: start;
     text-align: left;
 }
 
 .imageWrapper {
     background-color: #ffffff;
     padding: 2px;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
+    aspect-ratio: 4/3;
+    overflow: hidden;
 }
 
 .image {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
 }
 
@@ -84,17 +103,21 @@
 }
 
 .text {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    line-height: 1.6;
 }
 
 .authorLine {
     font-style: italic;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
 }
 
 .coupleLine {
     font-weight: 700;
     margin-bottom: 4px;
+    font-size: 20px;
+    color: var(--text-primary);
 }
 
 .weds {
@@ -111,14 +134,14 @@
     font-style: italic;
 }
 
-/* mobile layout: one column, one card */
+/* mobile layout: one column carousel */
 @media (max-width: 768px) {
     .section {
-        padding: 40px 16px;
+        padding: var(--section-padding-mobile) 16px;
     }
 
     .subTitle {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .title {
@@ -126,30 +149,19 @@
     }
 
     .grid {
-        grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .card {
-        padding: 0;
-    }
-
-    .text .authorLine {
-        font-size: 14px;
-        font-weight: 500;
+        flex: 0 0 85%;
+        /* Show part of the next card */
     }
 
     .coupleLine {
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 18px;
     }
 
     .dateLine {
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    /* hide the second card on mobile only if limited */
-    .limited .card:nth-child(2) {
-        display: none;
+        font-size: 16px;
     }
 }

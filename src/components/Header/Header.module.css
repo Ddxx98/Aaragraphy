@@ -17,19 +17,38 @@
 }
 
 /* logo */
-.logo,
-.logoOverlay {
+.logo {
   text-decoration: none;
-  font-family: var(--font-serif);
-  font-size: 32px;
-  letter-spacing: 0.04em;
-  color: var(--text-primary);
-  /* dark desaturated green */
+  display: flex;
+  align-items: center;
+  height: 40px;
+  /* Base height for desktop */
+  transition: opacity 0.3s ease;
+}
+
+.logo img {
+  height: 100%;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.logo:hover {
+  opacity: 0.8;
 }
 
 .logoOverlay {
-  color: white;
-  font-size: 18px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.logoOverlay img {
+  height: 100%;
+  width: auto;
+  filter: brightness(0) invert(1);
+  /* Make logo white for green overlay */
 }
 
 /* desktop nav */
@@ -47,7 +66,7 @@
 }
 
 .link:hover {
-    color: var(--green-active);
+  color: var(--green-active);
 }
 
 .activeLink {
@@ -166,8 +185,9 @@
 /* responsiveness */
 @media (max-width: 768px) {
   .logo {
-    font-size: 18px;
+    height: 32px;
   }
+
   .navDesktop {
     display: none;
   }

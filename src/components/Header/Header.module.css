@@ -11,7 +11,8 @@
 
 .inner {
   margin: 0 auto;
-  padding: 18px 40px;
+  height: var(--header-height);
+  padding: 0 40px;
   display: flex;
   align-items: center;
 }
@@ -21,9 +22,10 @@
   text-decoration: none;
   display: flex;
   align-items: center;
-  height: 40px;
-  /* Base height for desktop */
+  height: 100%;
   transition: opacity 0.3s ease;
+  padding: 0;
+  margin: 0;
 }
 
 .logo img {
@@ -185,7 +187,7 @@
 /* responsiveness */
 @media (max-width: 768px) {
   .logo {
-    height: 32px;
+    /* height: 32px; removed to keep 100% height from global */
   }
 
   .navDesktop {
@@ -197,7 +199,8 @@
   }
 
   .inner {
-    padding-inline: 16px;
+    height: var(--header-height);
+    padding: 0 16px;
   }
 }
 

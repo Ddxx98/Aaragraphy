@@ -1,12 +1,15 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./ReviewSection.module.css";
 import { getFromDB } from "../../utils/fbApi";
+import { resolveImagePath } from "../../utils/wpApi";
 import coupleFallback from "../../assets/couple.jpg";
 
 const STATIC_REVIEWS = [
   {
     id: "r1",
-    image: coupleFallback,
+    image: coupleFallback.src,
     text: "A good photographer, who actually made our time special and captured the important candid moments which we ourselves didn't expect looks this great when we look back.",
     authorLine: "Happy Client",
     groom: "Aniketh Russel",
@@ -15,7 +18,7 @@ const STATIC_REVIEWS = [
   },
   {
     id: "r2",
-    image: coupleFallback,
+    image: coupleFallback.src,
     text: "The attention to detail and ability to stay invisible while capturing the most intimate moments was truly remarkable. We couldn't be happier with our wedding gallery!",
     authorLine: "Bride's Sister",
     groom: "Rahul",
@@ -24,7 +27,7 @@ const STATIC_REVIEWS = [
   },
   {
     id: "r3",
-    image: coupleFallback,
+    image: coupleFallback.src,
     text: "Every single frame tells a story. The composition and lighting are just breathtaking. It felt like reliving our special day all over again when we saw the photos.",
     authorLine: "Groom's Mother",
     groom: "James",
@@ -33,7 +36,7 @@ const STATIC_REVIEWS = [
   },
   {
     id: "r4",
-    image: coupleFallback,
+    image: coupleFallback.src,
     text: "Professional, creative, and such a joy to work with. They made everyone feel so comfortable in front of the camera, and the results speak for themselves. Simply stunning!",
     authorLine: "Best Friend",
     groom: "Vikram",
@@ -60,7 +63,7 @@ const ReviewSection = () => {
 
           const mappedReviews = sorted.map(rev => ({
             id: rev.id,
-            image: rev.image || coupleFallback,
+            image: resolveImagePath(rev.image, coupleFallback.src),
             text: rev.text || "A wonderful experience.",
             authorLine: rev.authorLine || "Happy Client",
             groom: rev.groom || "",

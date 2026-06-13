@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./Blog.module.css";
 import ArrowDropdown from "../../assets/arrow_drop_down.svg";
 
 const Blog = ({ posts = [], categories = ["All"], activeView, setActiveView }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("All");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
@@ -22,7 +24,7 @@ const Blog = ({ posts = [], categories = ["All"], activeView, setActiveView }) =
   });
 
   const handleBlogClick = (postId) => {
-    navigate(`/blog/${postId}`);
+    router.push(`/blog/${postId}`);
   };
 
   const handleKeyDown = (e, postId) => {
@@ -71,7 +73,7 @@ const Blog = ({ posts = [], categories = ["All"], activeView, setActiveView }) =
             className={styles.dropdownTrigger}
             onClick={toggleCategoryDropdown}
           >
-            {activeCategory} <img src={ArrowDropdown} alt="Dropdown Arrow" className={styles.arrow} />
+            {activeCategory} <img src={ArrowDropdown.src} alt="Dropdown Arrow" className={styles.arrow} />
           </button>
           {isCategoryOpen && (
             <div className={styles.dropdownMenu}>
@@ -111,7 +113,7 @@ const Blog = ({ posts = [], categories = ["All"], activeView, setActiveView }) =
             className={styles.dropdownTrigger}
             onClick={toggleViewDropdown}
           >
-            {view} <img src={ArrowDropdown} alt="Dropdown Arrow" className={styles.arrow} />
+            {view} <img src={ArrowDropdown.src} alt="Dropdown Arrow" className={styles.arrow} />
           </button>
           {isViewOpen && (
             <div className={styles.dropdownMenu}>

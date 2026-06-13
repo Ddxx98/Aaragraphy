@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./RecentSection.module.css";
 import coupleFallback from "../../assets/couple.jpg";
-import { fetchFromWP, getImageUrl, getACF, getFeaturedImage } from "../../utils/wpApi";
+import { fetchFromWP, getImageUrl, getACF, getFeaturedImage, resolveImagePath } from "../../utils/wpApi";
 import { getFromDB } from "../../utils/fbApi";
 
 const STATIC_ITEMS = [
@@ -12,7 +14,7 @@ const STATIC_ITEMS = [
     groom: "Aniketh Russel",
     bride: "Arunima David",
     date: "2024-10-12",
-    image: coupleFallback
+    image: coupleFallback.src
   },
   {
     id: "wedding",
@@ -20,12 +22,12 @@ const STATIC_ITEMS = [
     groom: "Aniketh Russel",
     bride: "Arunima David",
     date: "2024-10-12",
-    image: coupleFallback
+    image: coupleFallback.src
   }
 ];
 
 const RecentSection = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [items, setItems] = useState(STATIC_ITEMS);
   const [loading, setLoading] = useState(true);
 
@@ -47,7 +49,7 @@ const RecentSection = () => {
             groom: post.groom,
             bride: post.bride,
             date: post.date,
-            image: post.mainImage || coupleFallback
+            image: resolveImagePath(post.mainImage || post.image, coupleFallback.src)
           }));
 
           setItems(recents.length > 0 ? recents : STATIC_ITEMS);
@@ -66,7 +68,7 @@ const RecentSection = () => {
   }, []);
 
   const handleBlogClick = (postId) => {
-    navigate(`/blog/${postId}`);
+    router.push(`/blog/${postId}`);
   };
 
   const handleKeyDown = (e, postId) => {
@@ -126,7 +128,7 @@ const RecentSection = () => {
       <button
         className={styles.viewAll}
         type="button"
-        onClick={() => navigate('/blog')}
+        onClick={() => router.push('/blog')}
       >
         VIEW ALL
       </button>

@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./Gallery.module.css";
-import { fetchFromWP, getImageUrl } from "../../utils/wpApi";
+import { fetchFromWP, getImageUrl, resolveImagePath } from "../../utils/wpApi";
 import { getFromDB } from "../../utils/fbApi";
 import fallbackImg1 from "../../assets/hero.jpg";
 import fallbackImg2 from "../../assets/capture.jpg";
@@ -14,20 +16,20 @@ import fallbackImg8 from "../../assets/bride_portrait.png";
 import fallbackImg9 from "../../assets/rings_detail.png";
 
 const Gallery = ({ viewAll, limited }) => {
-    const navigate = useNavigate();
+    const router = useRouter();
     const [galleryImages, setGalleryImages] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fallbackImages = [
-        { id: 'f1', src: fallbackImg1, alt: 'Gallery Fallback 1' },
-        { id: 'f2', src: fallbackImg2, alt: 'Gallery Fallback 2' },
-        { id: 'f3', src: fallbackImg3, alt: 'Gallery Fallback 3' },
-        { id: 'f4', src: fallbackImg4, alt: 'Gallery Fallback 4' },
-        { id: 'f5', src: fallbackImg5, alt: 'Gallery Fallback 5' },
-        { id: 'f6', src: fallbackImg6, alt: 'Gallery Fallback 6' },
-        { id: 'f7', src: fallbackImg7, alt: 'Gallery Fallback 7' },
-        { id: 'f8', src: fallbackImg8, alt: 'Gallery Fallback 8' },
-        { id: 'f9', src: fallbackImg9, alt: 'Gallery Fallback 9' },
+        { id: 'f1', src: fallbackImg1.src, alt: 'Gallery Fallback 1' },
+        { id: 'f2', src: fallbackImg2.src, alt: 'Gallery Fallback 2' },
+        { id: 'f3', src: fallbackImg3.src, alt: 'Gallery Fallback 3' },
+        { id: 'f4', src: fallbackImg4.src, alt: 'Gallery Fallback 4' },
+        { id: 'f5', src: fallbackImg5.src, alt: 'Gallery Fallback 5' },
+        { id: 'f6', src: fallbackImg6.src, alt: 'Gallery Fallback 6' },
+        { id: 'f7', src: fallbackImg7.src, alt: 'Gallery Fallback 7' },
+        { id: 'f8', src: fallbackImg8.src, alt: 'Gallery Fallback 8' },
+        { id: 'f9', src: fallbackImg9.src, alt: 'Gallery Fallback 9' },
     ];
 
     useEffect(() => {
@@ -36,31 +38,12 @@ const Gallery = ({ viewAll, limited }) => {
                 // Firebase Fetching
                 const firebaseData = await getFromDB('gallery');
                 if (firebaseData && Array.isArray(firebaseData)) {
-                    setGalleryImages(firebaseData);
+                    const resolvedGallery = firebaseData.map(img => ({
+                        ...img,
+                        src: resolveImagePath(img.src, fallbackImg1.src)
+                    }));
+                    setGalleryImages(resolvedGallery);
                 } else {
-                    /* Commented out WordPress Dynamic Fetching
-                    const data = await fetchFromWP('/media', {
-                        per_page: 9,
-                        media_type: 'image'
-                    });
-
-                    let images = [];
-                    if (data && data.length > 0) {
-                        images = data.map(item => ({
-                            id: item.id,
-                            src: getImageUrl(item.source_url, fallbackImages[0].src),
-                            alt: item.alt_text || item.title.rendered
-                        }));
-                    }
-
-                    if (images.length < 9) {
-                        const remainingCount = 9 - images.length;
-                        const padding = fallbackImages.slice(images.length, 9);
-                        images = [...images, ...padding];
-                    }
-
-                    setGalleryImages(images);
-                    */
                     setGalleryImages(fallbackImages);
                 }
             } catch (error) {
@@ -90,9 +73,9 @@ const Gallery = ({ viewAll, limited }) => {
                 {displayedImages.map((image, index) => (
                     <div key={image.id || index} className={styles.imageWrapper}>
                         <img
-                            src={image.src}
-                            alt={image.alt || `Gallery image ${index + 1}`}
-                            className={styles.image}
+                          src={image.src}
+                          alt={image.alt || `Gallery image ${index + 1}`}
+                          className={styles.image}
                         />
                     </div>
                 ))}
@@ -102,7 +85,7 @@ const Gallery = ({ viewAll, limited }) => {
                 <button
                     className={styles.viewAll}
                     type="button"
-                    onClick={() => navigate('/blog')}
+                    onClick={() => router.push('/blog')}
                 >
                     VIEW ALL
                 </button>

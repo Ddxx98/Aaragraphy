@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_WP_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_WP_API_URL;
 
 /**
  * Utility to fetch data from WordPress REST API
@@ -47,8 +47,8 @@ export const getACF = (post) => {
  * @returns {Promise<string>} - The source URL of the uploaded image
  */
 export const uploadToWP = async (file) => {
-    const username = import.meta.env.VITE_WP_USERNAME;
-    const password = import.meta.env.VITE_WP_APP_PASSWORD;
+    const username = process.env.NEXT_PUBLIC_WP_USERNAME;
+    const password = process.env.NEXT_PUBLIC_WP_APP_PASSWORD;
 
     if (!username || !password) {
         throw new Error("WordPress credentials missing in .env");
@@ -100,8 +100,8 @@ export const deleteFromWP = async (mediaId) => {
         return false; // Silently fail or return false if ID is obviously invalid
     }
 
-    const username = import.meta.env.VITE_WP_USERNAME;
-    const password = import.meta.env.VITE_WP_APP_PASSWORD;
+    const username = process.env.NEXT_PUBLIC_WP_USERNAME;
+    const password = process.env.NEXT_PUBLIC_WP_APP_PASSWORD;
 
     if (!username || !password) {
         throw new Error("WordPress credentials missing in .env");
@@ -141,3 +141,33 @@ export const getImageUrl = (wpUrl, fallbackAsset) => {
     }
     return fallbackAsset;
 };
+
+/**
+ * Resolves static/relative image paths dynamically, pointing them to the public assets folder in production.
+ * @param {string} path - The path to resolve
+ * @param {any} fallbackAsset - The fallback asset (imported object or string)
+ * @returns {string} - The resolved image URL
+ */
+export const resolveImagePath = (path, fallbackAsset) => {
+    if (!path || typeof path !== 'string' || path.trim() === '') {
+        return fallbackAsset?.src || fallbackAsset || '';
+    }
+    if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+        return path;
+    }
+    
+    // Find index of "assets/"
+    const assetsIndex = path.indexOf('assets/');
+    if (assetsIndex !== -1) {
+        return '/' + path.slice(assetsIndex);
+    }
+    
+    // Fallback if it is just a filename
+    const filename = path.split('/').pop();
+    if (filename) {
+        return `/assets/${filename}`;
+    }
+    
+    return fallbackAsset?.src || fallbackAsset || '';
+};
+

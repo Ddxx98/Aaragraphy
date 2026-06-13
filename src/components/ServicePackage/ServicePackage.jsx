@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import styles from './ServicePackage.module.css';
-import { fetchFromWP, getACF, getImageUrl } from '../../utils/wpApi';
+import { fetchFromWP, getACF, getImageUrl, resolveImagePath } from '../../utils/wpApi';
 import { getFromDB } from '../../utils/fbApi';
 import coupleFallback from '../../assets/couple.jpg';
 
@@ -9,7 +11,7 @@ const STATIC_PACKAGES = [
         title: "The Signature experience",
         duration: "4.5 to 5 hours",
         ideal_for: "Full branding packages, special events, civil ceremony, wedding (half day), commercial clients.",
-        image: coupleFallback,
+        image: coupleFallback.src,
         deliverables: [
             "120+ edited photos",
             "Multiple locations & outfit change",
@@ -22,7 +24,7 @@ const STATIC_PACKAGES = [
         title: "The Premium",
         duration: "3 to 3.5 hours",
         ideal_for: "Business branding, model portfolios, family events, engagement sessions, couple shoots.",
-        image: coupleFallback,
+        image: coupleFallback.src,
         deliverables: [
             "80+ edited photos",
             "Multiple locations & outfit change",
@@ -35,7 +37,7 @@ const STATIC_PACKAGES = [
         title: "The Classic",
         duration: "2 hours",
         ideal_for: "Families, branding sessions, couple shoots, Cafes.",
-        image: coupleFallback,
+        image: coupleFallback.src,
         deliverables: [
             "50 edited photos",
             "Location & outfit of your choice",
@@ -47,7 +49,7 @@ const STATIC_PACKAGES = [
         title: "The essentials",
         duration: "2 hours",
         ideal_for: "Mini portrait sessions & small product shoots.",
-        image: coupleFallback,
+        image: coupleFallback.src,
         deliverables: [
             "15 professionally edited photos",
             "1 hour shooting time"
@@ -76,7 +78,11 @@ const ServicePackage = ({ onSelectPackage, onPackagesLoaded }) => {
                 const firebaseData = await getFromDB('services');
                 if (firebaseData) {
                     if (firebaseData.packages) {
-                        setPackages(firebaseData.packages);
+                        const resolvedPkgs = firebaseData.packages.map(p => ({
+                            ...p,
+                            image: resolveImagePath(p.image, coupleFallback.src)
+                        }));
+                        setPackages(resolvedPkgs);
                         if (onPackagesLoaded) onPackagesLoaded(firebaseData.packages.map(p => p.title));
                     }
                     if (firebaseData.addons && firebaseData.addons.some(a => a.trim() !== "")) {

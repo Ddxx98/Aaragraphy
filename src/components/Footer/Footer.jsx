@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import styles from "./Footer.module.css";
 import CameraIcon from "../../assets/camera.png";
@@ -37,7 +39,7 @@ const Footer = () => {
                         </div>
                     </div>
                     <div className={styles.rightCol}>
-                        <img src={CameraIcon} alt="Aarography" className={styles.cameraIcon} />
+                        <img src={CameraIcon.src} alt="Aarography" className={styles.cameraIcon} />
                     </div>
                 </div>
 

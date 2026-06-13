@@ -1,7 +1,10 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./Service.module.css";
 import { getFromDB } from "../../utils/fbApi";
+import { resolveImagePath } from "../../utils/wpApi";
 
 // Static Fallbacks
 import weddingImg from "../../assets/service/wedding.jpg";
@@ -12,16 +15,16 @@ import casualImg from "../../assets/service/casual.jpg";
 import babyImg from "../../assets/service/baby.jpg";
 
 const STATIC_SERVICES = [
-    { id: "wedding", label: "Wedding", image: weddingImg, description: "Your life's most important decision on our lens" },
-    { id: "ceremonies", label: "Ceremonies", image: ceremoniesImg, description: "Your life's most important decision on our lens" },
-    { id: "corporate", label: "Corporate Events", image: corporateImg, description: "Your life's most important decision on our lens" },
-    { id: "travel", label: "Travel", image: travelImg, description: "Your life's most important decision on our lens" },
-    { id: "casual", label: "Casual Shoot", image: casualImg, description: "Your life's most important decision on our lens" },
-    { id: "baby", label: "Baby Shoot", image: babyImg, description: "Your life's most important decision on our lens" },
+    { id: "wedding", label: "Wedding", image: weddingImg.src, description: "Your life's most important decision on our lens" },
+    { id: "ceremonies", label: "Ceremonies", image: ceremoniesImg.src, description: "Your life's most important decision on our lens" },
+    { id: "corporate", label: "Corporate Events", image: corporateImg.src, description: "Your life's most important decision on our lens" },
+    { id: "travel", label: "Travel", image: travelImg.src, description: "Your life's most important decision on our lens" },
+    { id: "casual", label: "Casual Shoot", image: casualImg.src, description: "Your life's most important decision on our lens" },
+    { id: "baby", label: "Baby Shoot", image: babyImg.src, description: "Your life's most important decision on our lens" },
 ];
 
 const Service = () => {
-    const navigate = useNavigate();
+    const router = useRouter();
     const [activeId, setActiveId] = useState("wedding");
     const [isTouch, setIsTouch] = useState(false);
     const [services, setServices] = useState(STATIC_SERVICES);
@@ -38,6 +41,7 @@ const Service = () => {
                     ).map(s => ({
                         ...s,
                         id: s.service_id || s.id, // Support both slug and timestamp ID
+                        image: resolveImagePath(s.image, STATIC_SERVICES.find(sf => sf.id === (s.service_id || s.id))?.image || weddingImg.src),
                         description: s.description || "Your life's most important decision on our lens"
                     }));
                     setServices(normalized);
@@ -51,11 +55,13 @@ const Service = () => {
 
         loadServices();
 
-        const mq = window.matchMedia("(hover: none)");
-        setIsTouch(mq.matches);
-        const handler = (e) => setIsTouch(e.matches);
-        mq.addEventListener("change", handler);
-        return () => mq.removeEventListener("change", handler);
+        if (typeof window !== 'undefined') {
+            const mq = window.matchMedia("(hover: none)");
+            setIsTouch(mq.matches);
+            const handler = (e) => setIsTouch(e.matches);
+            mq.addEventListener("change", handler);
+            return () => mq.removeEventListener("change", handler);
+        }
     }, []);
 
     const handleClick = (id) => {
@@ -100,7 +106,7 @@ const Service = () => {
                                     className={styles.contactBtn}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate('/contact');
+                                        router.push('/contact');
                                     }}
                                 >
                                     Let's Go
@@ -113,7 +119,7 @@ const Service = () => {
 
             <button
                 className={styles.mainContactBtn}
-                onClick={() => navigate('/faq')}
+                onClick={() => router.push('/faq')}
             >
                 FAQ
             </button>

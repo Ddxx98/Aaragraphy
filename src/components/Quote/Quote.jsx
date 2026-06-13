@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./Quote.module.css";
 import { getFromDB } from "../../utils/fbApi";
 
 const Quote = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [tags, setTags] = useState("Dublin Photographer, Professional Photographer Dublin, Ireland Wedding Photographer, Dublin Wedding Photography, Event Photographer Dublin, Portrait Photographer Dublin, Engagement Photographer Ireland, Elopement Photographer Dublin, Travel Photographer Ireland, Corporate Event Photographer Dublin, Luxury Photography Dublin, Cinematic Wedding Photography Ireland, Creative Portrait Photography Dublin, Affordable Photographer Dublin, Destination Wedding Photographer Ireland");
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const Quote = () => {
           <div className={styles.gridCell}>intensionally</div>
 
           <div className={styles.gridCell}>become</div>
-          <div className={`${styles.gridCell} ${styles.contactCell}`} onClick={() => navigate('/contact')}>contact</div>
+          <div className={`${styles.gridCell} ${styles.contactCell}`} onClick={() => router.push('/contact')}>contact</div>
           <div className={styles.gridCell}>memories.</div>
 
           <div className={styles.gridCell}>Let&apos;s</div>

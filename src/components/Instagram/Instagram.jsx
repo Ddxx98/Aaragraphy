@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Instagram.module.css";
 import { getFromDB } from "../../utils/fbApi";

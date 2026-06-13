@@ -1,11 +1,13 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import styles from "./Hero.module.css";
 import backgroundImageFallback from "../../assets/hero.jpg";
-import { fetchFromWP, getImageUrl, getACF } from "../../utils/wpApi";
+import { fetchFromWP, getImageUrl, getACF, resolveImagePath } from "../../utils/wpApi";
 import { getFromDB } from "../../utils/fbApi";
 
 const Hero = () => {
-  const [heroImage, setHeroImage] = useState(backgroundImageFallback);
+  const [heroImage, setHeroImage] = useState(backgroundImageFallback.src);
 
   useEffect(() => {
     const loadHeroData = async () => {
@@ -13,7 +15,7 @@ const Hero = () => {
         // Firebase Fetching
         const firebaseData = await getFromDB('hero');
         if (firebaseData && firebaseData.image) {
-          setHeroImage(firebaseData.image);
+          setHeroImage(resolveImagePath(firebaseData.image, backgroundImageFallback.src));
         }
 
         /* Commented out WordPress Dynamic Fetching
